@@ -12,5 +12,8 @@ namespace FrogAnanas
         public const string createHero = "Создать персоонажа";
         public const string male = "Мужик";
         public const string female = "Вумен";
+        public const string player = "Персонаж";
+        public const string playerInfo = "Характеристики";
+        public const string playerInventory = "Инвентарь";
     }
 }

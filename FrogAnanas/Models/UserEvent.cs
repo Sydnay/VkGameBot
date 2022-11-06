@@ -19,5 +19,9 @@ namespace FrogAnanas.Models
         HandleStart = 1,
         HandleGender = 2,
         HandleCreation = 3,
+        HandlePlayer = 4,
+        HandlePlayerInfo = 5,
+        HandlePlayerInventory = 6,
+
     }
 }

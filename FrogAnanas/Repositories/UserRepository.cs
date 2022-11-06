@@ -30,14 +30,18 @@ namespace FrogAnanas.Repositories
             }
         }
 
-        public async Task<User> GetUser(long id)
+        public async Task<User> GetUserAsync(long userId)
         {
-            return await context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            return await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        }
+        public async Task<User> GetUserWithPlayerAsync(long userId)
+        {
+            return await context.Users.Include(x=>x.Player).FirstOrDefaultAsync(x => x.Id == userId);
         }
 
         public async Task SetCurrentEvent(long userId, EventType currEvent)
         {
-            var user = await GetUser(userId);
+            var user = await GetUserAsync(userId);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -47,12 +51,50 @@ namespace FrogAnanas.Repositories
         }
         public async Task SetPlayerId(long userId, long playerId)
         {
-            var user = await GetUser(userId);
+            var user = await GetUserAsync(userId);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
             user.PlayerId = playerId;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task ABOBA()
+        {
+            if (context.UserEvents.FirstOrDefault() is not null)
+                return;
+            
+            await context.UserEvents.AddAsync(new UserEvent
+            {
+                Id = (int)EventType.HandleStart,
+                Name = EventType.HandleStart.ToString()
+            });
+            await context.UserEvents.AddAsync(new UserEvent
+            {
+                Id = (int)EventType.HandleGender,
+                Name = EventType.HandleGender.ToString()
+            });
+            await context.UserEvents.AddAsync(new UserEvent
+            {
+                Id = (int)EventType.HandleCreation,
+                Name = EventType.HandleCreation.ToString()
+            });
+            await context.UserEvents.AddAsync(new UserEvent
+            {
+                Id = (int)EventType.HandlePlayer,
+                Name = EventType.HandlePlayer.ToString()
+            });
+            await context.UserEvents.AddAsync(new UserEvent
+            {
+                Id = (int)EventType.HandlePlayerInfo,
+                Name = EventType.HandlePlayerInfo.ToString()
+            });
+            await context.UserEvents.AddAsync(new UserEvent
+            {
+                Id = (int)EventType.HandlePlayerInventory,
+                Name = EventType.HandlePlayerInventory.ToString()
+            });
             await context.SaveChangesAsync();
         }
     }

@@ -4,10 +4,10 @@ using FrogAnanas.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-BuildConfig();
+var app = BuildConfig();
+app.Start();
 
-
-static void BuildConfig()
+static AppStart BuildConfig()
 {
     //var serviceProvider = new ServiceCollection()
     //        .AddLogging()
@@ -31,22 +31,20 @@ static void BuildConfig()
     //logger.LogDebug("All done!");
 
     var services = new ServiceCollection()
-    .AddDbContext<ApplicationContext>(ServiceLifetime.Transient);
+    .AddDbContextFactory<ApplicationContext>(lifetime:ServiceLifetime.Transient);
 
-    // register `Worker` in the service collection
     services.AddTransient<IUserRepository, UserRepository>();
     services.AddTransient<IPlayerRepository, PlayerRepository>();
+    services.AddTransient<AppStart>();
 
-    // build the service provider
     var serviceProvider = services.BuildServiceProvider();
 
-    // resolve a `Worker` from the service provider
     var userRepo = serviceProvider.GetService<IUserRepository>();
     var playerRepo = serviceProvider.GetService<IPlayerRepository>();
 
     var logger = serviceProvider.GetService<ILogger<Program>>();
 
     //logger.LogInformation("Closing Application");
-    AppStart app = new AppStart(userRepo, playerRepo);
-    app.Start();
+    AppStart app = serviceProvider.GetService<AppStart>();
+    return app;
 }

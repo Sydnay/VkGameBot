@@ -19,11 +19,10 @@ namespace FrogAnanas.Repositories
         {
             try
             {
-                await context.Players.AddAsync(player);
+                var playerEntiry = await context.Players.AddAsync(player);
                 await context.SaveChangesAsync();
 
-                var id = context.Set<Player>().FirstOrDefault()!.Id;
-                return id;
+                return playerEntiry.Entity.Id;
             }
             catch (Exception ex)
             {
