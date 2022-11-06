@@ -32,16 +32,28 @@ namespace FrogAnanas.Repositories
 
         public async Task<User> GetUser(long id)
         {
-            return context.Users.FirstOrDefault(x => x.Id == id);
+            return await context.Users.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<bool> IsExist(long id)
+        public async Task SetCurrentEvent(long userId, EventType currEvent)
         {
-            var user = await GetUser(id);
+            var user = await GetUser(userId);
 
-            if(user is null)
-                return false;
-            return true;
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            user.EventId = (int)currEvent;
+            await context.SaveChangesAsync();
+        }
+        public async Task SetPlayerId(long userId, long playerId)
+        {
+            var user = await GetUser(userId);
+
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            user.PlayerId = playerId;
+            await context.SaveChangesAsync();
         }
     }
 }

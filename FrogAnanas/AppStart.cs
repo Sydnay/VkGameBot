@@ -28,21 +28,28 @@ namespace FrogAnanas
         }
         public async void Start()
         {
-            bot.OnMessageReceived += HandleStart;
-            bot.OnMessageReceived += HandleMessage;
-            bot.OnMessageReceived += HandleMessage1;
+            bot.OnMessageReceived += HandleStart1;
+            bot.OnMessageReceived += HandleGender2;
+            bot.OnMessageReceived += HandleCreation3;
 
             Console.WriteLine("SstartReceiveng");
             bot.Start();
             Console.ReadLine();
         }
-        async void HandleStart(object? sender, MessageReceivedEventArgs e)
+        async void HandleStart1(object? sender, MessageReceivedEventArgs e)
         {
+            var userId = e.Message.FromId ?? -1;
+            var user = await userRepository.GetUser(userId);
+
+            if (user is not null)
+                return;
+
             var msg = e.Message.Text;
-            if (msg != "/start")
+            if (msg != ConstPhrase.start)
             {
                 var keyboard = new KeyboardBuilder(true);
-                keyboard.AddButton("/start", "", KeyboardButtonColor.Default);
+                keyboard.AddButton(ConstPhrase.start, "", KeyboardButtonColor.Default);
+
                 await bot.Api.Messages.SendAsync(new MessagesSendParams
                 {
                     Message = "Нажмите /start чтобы начать",
@@ -54,29 +61,21 @@ namespace FrogAnanas
             }
             else
             {
-                var userId = e.Message.FromId ?? -1;
-                var isExist = await userRepository.IsExist(userId);
-
-                if (isExist)
-                    return;
-
-                var id = await playerRepository.AddPlayer(new Player
-                {
-                    Name = (await bot.Api.Users.GetAsync(new List<long> { e.Message.FromId ?? (long)-1 })).FirstOrDefault()!.FirstName,
-                    Gender = Gender.Female
-                });
+                var keyboard = new KeyboardBuilder(true);
+                keyboard.AddButton(ConstPhrase.createHero, "", KeyboardButtonColor.Positive);
 
                 await userRepository.AddUser(new User
                 {
                     Id = userId,
-                    PlayerId = id,
+                    EventId = (int)EventType.HandleStart
                 });
 
                 await bot.Api.Messages.SendAsync(new MessagesSendParams
                 {
-                    Message = "Добро пожаловать узбек",
+                    Message = "Добро пожаловать узбек \nДавайте создадим персоонажа",
                     PeerId = e.Message.PeerId,
                     RandomId = Math.Abs(Environment.TickCount),
+                    Keyboard= keyboard.Build()
                 });
 
                 Console.WriteLine($"Сообщение отправлено");
@@ -84,49 +83,69 @@ namespace FrogAnanas
 
         }
 
-        void HandleMessage(object? sender, MessageReceivedEventArgs e)
+        async void HandleGender2(object? sender, MessageReceivedEventArgs e)
         {
+            var userId = e.Message.FromId ?? -1;
+            var user = await userRepository.GetUser(userId);
+
+            if (user is null)
+                return;
+
             var msg = e.Message.Text;
             Console.WriteLine($"{msg}");
-            if (msg == "ping")
+
+            if (msg == ConstPhrase.createHero && user.EventId == (int)EventType.HandleStart)
             {
-                bot.Api.Messages.SendAsync(new MessagesSendParams
+                var keyboard = new KeyboardBuilder(true);
+                keyboard.AddButton(ConstPhrase.male, "", KeyboardButtonColor.Positive)
+                        .AddButton(ConstPhrase.female, "", KeyboardButtonColor.Negative);
+
+                await bot.Api.Messages.SendAsync(new MessagesSendParams
                 {
-                    Message = $"Message: {e.Message.Text} \nChatId: {e.Message.ChatId} \n UserId:{e.Message.UserId} \n FromId:{e.Message.FromId} \n PeerId:{e.Message.PeerId}",
+                    Message = "Выберите пол",
                     PeerId = e.Message.PeerId,
                     RandomId = Math.Abs(Environment.TickCount),
+                    Keyboard = keyboard.Build()
                 });
+
+                await userRepository.SetCurrentEvent(userId, EventType.HandleGender);
+                Console.WriteLine($"Сообщение {msg} отправлено");
             }
 
-            Console.WriteLine($"Сообщение {msg} отправлено");
         }
 
-        void HandleMessage1(object? sender, MessageReceivedEventArgs e)
+        async void HandleCreation3(object? sender, MessageReceivedEventArgs e)
         {
+            var userId = e.Message.FromId ?? -1;
+            var user = await userRepository.GetUser(userId);
+
+            if (user is null)
+                return;
+
             var msg = e.Message.Text;
             Console.WriteLine($"{msg}");
 
-            if (msg == "Добить босса" /*&& UserEvent == "айди события битвы с боссом"*/)
+            if ((msg == ConstPhrase.male||msg == ConstPhrase.female) && user.Id == (int)EventType.HandleGender  /*&& UserEvent == "айди события битвы с боссом"*/)
             {
-                bot.Api.Messages.SendAsync(new MessagesSendParams
+                var playerId = await playerRepository.AddPlayer(new Player
                 {
-                    Message = $"второй хендлер",
+                    Name = (await bot.Api.Users.GetAsync(new List<long> { e.Message.FromId ?? (long)-1 })).FirstOrDefault()!.FirstName,
+                    Gender = msg == ConstPhrase.female ? Gender.Female : Gender.Male,
+                });
+
+                await userRepository.SetPlayerId(userId, playerId);
+
+                await bot.Api.Messages.SendAsync(new MessagesSendParams
+                {
+                    Message = "Персоонаж успешно создан",
                     PeerId = e.Message.PeerId,
                     RandomId = Math.Abs(Environment.TickCount),
                 });
+
+                await userRepository.SetCurrentEvent(userId, EventType.HandleCreation);
+                Console.WriteLine($"Сообщение {msg} отправлено");
             }
 
-            else
-            {
-                bot.Api.Messages.SendAsync(new MessagesSendParams
-                {
-                    Message = "иди нахуй",
-                    PeerId = e.Message.PeerId,
-                    RandomId = Math.Abs(Environment.TickCount),
-                });
-            }
-
-            Console.WriteLine($"Сообщение {msg} отправлено");
         }
     }
 }

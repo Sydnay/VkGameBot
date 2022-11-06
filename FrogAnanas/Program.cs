@@ -31,10 +31,10 @@ static void BuildConfig()
     //logger.LogDebug("All done!");
 
     var services = new ServiceCollection()
-    .AddDbContext<ApplicationContext>();
+    .AddDbContext<ApplicationContext>(ServiceLifetime.Transient);
 
     // register `Worker` in the service collection
-    services.AddTransient<IUserRepository, UserRepository>();
+    services.AddTransient<IUserRepository, UserRepository>(,);
     services.AddTransient<IPlayerRepository, PlayerRepository>();
 
     // build the service provider

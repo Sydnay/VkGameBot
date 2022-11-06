@@ -11,6 +11,7 @@ namespace FrogAnanas.Repositories
     {
         Task<User> GetUser (long id);
         Task AddUser (User user);
-        Task<bool> IsExist(long id);
+        Task SetCurrentEvent(long userId, EventType currEvent);
+        Task SetPlayerId(long userId, long playerId);
     }
 }

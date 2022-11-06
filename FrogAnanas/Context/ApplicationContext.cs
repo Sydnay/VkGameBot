@@ -12,9 +12,30 @@ namespace FrogAnanas.Context
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Player> Players { get; set; }
-        public ApplicationContext()
+        public DbSet<UserEvent> UserEvents { get; set; }
+
+        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
             Database.EnsureCreated();
+            if(UserEvents.Local.FirstOrDefault() is null)
+            {
+                UserEvents.Add(new UserEvent
+                {
+                    Id = (int)EventType.HandleStart,
+                    Name = EventType.HandleStart.ToString()
+                });
+                UserEvents.Add(new UserEvent
+                {
+                    Id = (int)EventType.HandleGender,
+                    Name = EventType.HandleGender.ToString()
+                });
+                UserEvents.Add(new UserEvent
+                {
+                    Id = (int)EventType.HandleCreation,
+                    Name = EventType.HandleCreation.ToString()
+                });
+                SaveChangesAsync();
+            }
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
