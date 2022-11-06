@@ -26,16 +26,26 @@ namespace FrogAnanas
             this.userRepository = userRepository;
             this.playerRepository = playerRepository;
         }
+        public async void cacheUsers()
+        {
+            var allUsers = userRepository.GetAllUsers().Result;
+
+            Console.WriteLine(allUsers);
+        }
         public async void Start()
         {
             bot.OnMessageReceived += HandleStart;
             bot.OnMessageReceived += HandleMessage;
             bot.OnMessageReceived += HandleMessage1;
 
+            cacheUsers();
             Console.WriteLine("SstartReceiveng");
             bot.Start();
             Console.ReadLine();
+            
         }
+
+       
         async void HandleStart(object? sender, MessageReceivedEventArgs e)
         {
             var msg = e.Message.Text;
@@ -58,7 +68,10 @@ namespace FrogAnanas
                 var isExist = await userRepository.IsExist(userId);
 
                 if (isExist)
+                {
+                    Console.WriteLine(isExist);
                     return;
+                }
 
                 var id = await playerRepository.AddPlayer(new Player
                 {

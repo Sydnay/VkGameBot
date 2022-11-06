@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -42,6 +43,12 @@ namespace FrogAnanas.Repositories
             if(user is null)
                 return false;
             return true;
+        }
+        
+        public async Task<List<User>> GetAllUsers()
+        {
+            var Users = context.Users.ToList();
+            return Users;
         }
     }
 }

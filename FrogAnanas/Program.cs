@@ -1,11 +1,12 @@
-﻿using FrogAnanas;
+﻿using Alachisoft.NCache.EntityFrameworkCore;
+using FrogAnanas;
 using FrogAnanas.Context;
 using FrogAnanas.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 BuildConfig();
-
 
 static void BuildConfig()
 {
@@ -31,7 +32,13 @@ static void BuildConfig()
     //logger.LogDebug("All done!");
 
     var services = new ServiceCollection()
-    .AddDbContext<ApplicationContext>();
+    .AddDbContext<ApplicationContext> (optionsBuilder => {
+        string cacheId = "myClusteredCache";
+        NCacheConfiguration.Configure(cacheId, DependencyType.SqlServer);
+        NCacheConfiguration.ConfigureLogger();
+        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=vkgamedb;Username=vkgame_client;Password=vkgamepasswd");
+    });
+    
 
     // register `Worker` in the service collection
     services.AddTransient<IUserRepository, UserRepository>();
