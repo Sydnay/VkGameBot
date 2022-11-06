@@ -12,6 +12,6 @@ namespace FrogAnanas.Repositories
         Task<User> GetUser (long id);
         Task AddUser (User user);
         Task<bool> IsExist(long id);
-        Task<List<User>> GetAllUsers();
+        Task<List<User>> GetAllUsersAsync();
     }
 }

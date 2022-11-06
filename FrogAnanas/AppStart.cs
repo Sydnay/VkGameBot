@@ -28,7 +28,7 @@ namespace FrogAnanas
         }
         public async void cacheUsers()
         {
-            var allUsers = userRepository.GetAllUsers().Result;
+            var allUsers = userRepository.GetAllUsersAsync().Result;
 
             Console.WriteLine(allUsers);
         }
@@ -133,7 +133,7 @@ namespace FrogAnanas
             {
                 bot.Api.Messages.SendAsync(new MessagesSendParams
                 {
-                    Message = "иди нахуй",
+                    Message = "sosi huy",
                     PeerId = e.Message.PeerId,
                     RandomId = Math.Abs(Environment.TickCount),
                 });

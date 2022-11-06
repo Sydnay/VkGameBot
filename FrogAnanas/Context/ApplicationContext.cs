@@ -13,7 +13,8 @@ namespace FrogAnanas.Context
         public DbSet<User> Users { get; set; }
         public DbSet<Player> Players { get; set; }
 
-        public ApplicationContext()
+        public ApplicationContext(DbContextOptions options)
+            : base(options)
         {
             Database.EnsureCreated();
         }

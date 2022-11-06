@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Alachisoft.NCache.EntityFrameworkCore;
 
 namespace FrogAnanas.Repositories
 {
@@ -45,10 +46,17 @@ namespace FrogAnanas.Repositories
             return true;
         }
         
-        public async Task<List<User>> GetAllUsers()
+        CachingOptions cachingOptions = new CachingOptions {
+            StoreAs = StoreAs.SeperateEntities
+        };
+        
+        public async Task<List<User>> GetAllUsersAsync()
         {
-            var Users = context.Users.ToList();
-            return Users;
+            CachingOptions cachingOptions = new CachingOptions {
+                StoreAs = StoreAs.SeperateEntities
+            };
+            var Users = context.Users.FromCache(cachingOptions).ToList();
+            return await Task.FromResult(Users);
         }
     }
 }

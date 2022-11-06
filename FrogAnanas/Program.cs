@@ -34,7 +34,7 @@ static void BuildConfig()
     var services = new ServiceCollection()
     .AddDbContext<ApplicationContext> (optionsBuilder => {
         string cacheId = "myClusteredCache";
-        NCacheConfiguration.Configure(cacheId, DependencyType.SqlServer);
+        NCacheConfiguration.Configure(cacheId, DependencyType.Other);
         NCacheConfiguration.ConfigureLogger();
         optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=vkgamedb;Username=vkgame_client;Password=vkgamepasswd");
     });
