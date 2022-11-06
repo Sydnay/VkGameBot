@@ -42,7 +42,7 @@ namespace FrogAnanas.Repositories
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
-            user.EventId = (int)currEvent;
+            user.UserEventId = (int)currEvent;
             await context.SaveChangesAsync();
         }
         public async Task SetPlayerId(long userId, long playerId)

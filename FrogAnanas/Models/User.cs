@@ -13,7 +13,7 @@ namespace FrogAnanas.Models
         public long Id { get; set; }
         public long? PlayerId { get; set; }
         public Player Player { get; set; }
-        public int EventId { get; set; }
+        public int UserEventId { get; set; }
         public UserEvent UserEvent { get; set; }
         public DateTime CreateDate { get; set; } = DateTime.Now;
     }

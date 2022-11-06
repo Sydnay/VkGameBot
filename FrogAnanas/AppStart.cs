@@ -67,7 +67,7 @@ namespace FrogAnanas
                 await userRepository.AddUser(new User
                 {
                     Id = userId,
-                    EventId = (int)EventType.HandleStart
+                    UserEventId = (int)EventType.HandleStart
                 });
 
                 await bot.Api.Messages.SendAsync(new MessagesSendParams
@@ -94,7 +94,7 @@ namespace FrogAnanas
             var msg = e.Message.Text;
             Console.WriteLine($"{msg}");
 
-            if (msg == ConstPhrase.createHero && user.EventId == (int)EventType.HandleStart)
+            if (msg == ConstPhrase.createHero && user.UserEventId == (int)EventType.HandleStart)
             {
                 var keyboard = new KeyboardBuilder(true);
                 keyboard.AddButton(ConstPhrase.male, "", KeyboardButtonColor.Positive)
