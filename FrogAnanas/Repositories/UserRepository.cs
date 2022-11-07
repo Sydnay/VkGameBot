@@ -7,6 +7,7 @@ namespace FrogAnanas.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly ApplicationContext context;
+        private readonly
         object locker = new object();
         public UserRepository(ApplicationContext context)
         {
@@ -24,7 +25,13 @@ namespace FrogAnanas.Repositories
                 throw ex;
             }
         }
-
+        public List<User> GetAllUsers()
+        {
+            lock (locker)
+            {
+                return context.Users.ToList();
+            }
+        }
         public User GetUserAsync(long userId)
         {
             lock (locker)

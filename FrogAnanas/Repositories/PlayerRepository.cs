@@ -1,5 +1,6 @@
 ﻿using FrogAnanas.Context;
 using FrogAnanas.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,9 +32,9 @@ namespace FrogAnanas.Repositories
             }
         }
 
-        public Task<Player> GetPlayer(long id)
+        public  Player GetPlayer(long? playerId)
         {
-            throw new NotImplementedException();
+            return context.Players.FirstOrDefault(x => x.Id == playerId);
         }
     }
 }

@@ -10,6 +10,7 @@ namespace FrogAnanas.Repositories
     public interface IUserRepository
     {
         User GetUserAsync (long id);
+        List<User> GetAllUsers();
         User GetUserWithPlayerAsync(long userId);
         Task AddUser (User user);
         void SetCurrentEvent(long userId, EventType currEvent);

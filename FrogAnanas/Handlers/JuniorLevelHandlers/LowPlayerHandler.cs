@@ -28,11 +28,11 @@ namespace FrogAnanas.Handlers.JuniorLevelHandlers
             });
         }
 
-        public async void HandlePlayerInfo5(User user, object? sender, MessageReceivedEventArgs e)
+        public async void HandlePlayerInfo5(Player player, object? sender, MessageReceivedEventArgs e)
         {
             await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
             {
-                Message = $"Имя: {user.Player.Name}\n Атака:{user.Player.DPS}\n Защита:{user.Player.Defence}\n Здоровье: {user.Player.HP}\n Sex:{user.Player.Gender}",
+                Message = $"Имя: {player.Name}\n Атака:{player.DPS}\n Защита:{player.Defence}\n Здоровье: {player.HP}\n Sex:{player.Gender}",
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
                 Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Default, ConstPhrase.player)

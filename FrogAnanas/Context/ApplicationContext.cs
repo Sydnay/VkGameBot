@@ -21,6 +21,7 @@ namespace FrogAnanas.Context
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Server=DESKTOP-ET4OTK6\SQLEXPRESS;Database=VkGamedb;Trusted_Connection=True;");
+            optionsBuilder.EnableSensitiveDataLogging();
         }
     }
 
