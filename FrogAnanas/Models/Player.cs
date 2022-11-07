@@ -17,7 +17,6 @@ namespace FrogAnanas.Models
         public int HP { get; set; }
         public double Initiative { get; set; }
         public int Perception { get; set; }
-        public User User { get; set; }
     }
 
     public enum Gender

@@ -9,10 +9,10 @@ namespace FrogAnanas.Repositories
 {
     public interface IUserRepository
     {
-        Task<User> GetUserAsync (long id);
-        Task<User> GetUserWithPlayerAsync(long userId);
+        User GetUserAsync (long id);
+        User GetUserWithPlayerAsync(long userId);
         Task AddUser (User user);
-        Task SetCurrentEvent(long userId, EventType currEvent);
+        void SetCurrentEvent(long userId, EventType currEvent);
         Task SetPlayerId(long userId, long playerId);
         Task ABOBA();
     }

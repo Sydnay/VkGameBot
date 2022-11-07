@@ -1,4 +1,5 @@
-﻿using FrogAnanas.Handlers.JuniorLevelHandlers;
+﻿using FrogAnanas.Constants;
+using FrogAnanas.Handlers.JuniorLevelHandlers;
 using FrogAnanas.Models;
 using FrogAnanas.Repositories;
 using System;
@@ -26,17 +27,17 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
             {
                 case (ConstPhrase.player, >0) :
                     handler.HandlePlayer4(sender, e);
-                    await userRepository.SetCurrentEvent(user.Id, EventType.HandlePlayer);
+                    userRepository.SetCurrentEvent(user.Id, EventType.HandlePlayer);
                     break;
 
                 case (ConstPhrase.playerInfo, (int)EventType.HandlePlayer):
                     handler.HandlePlayerInfo5(user, sender, e);
-                    await userRepository.SetCurrentEvent(user.Id, EventType.HandlePlayerInfo);
+                    userRepository.SetCurrentEvent(user.Id, EventType.HandlePlayerInfo);
                     break;
 
                 case (ConstPhrase.playerInventory, (int)EventType.HandlePlayer):
                     handler.HandlePlayerInventory6(sender, e);
-                    await userRepository.SetCurrentEvent(user.Id, EventType.HandlePlayerInventory);
+                    userRepository.SetCurrentEvent(user.Id, EventType.HandlePlayerInventory);
                     break;
 
                 default:

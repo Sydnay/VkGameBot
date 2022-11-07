@@ -12,7 +12,7 @@ app.Start();
 static AppStart BuildConfig()
 {
     var services = new ServiceCollection()
-    .AddDbContextFactory<ApplicationContext>(lifetime:ServiceLifetime.Transient);
+    .AddDbContextFactory<ApplicationContext>(lifetime:ServiceLifetime.Singleton);
 
     services.AddTransient<IUserRepository, UserRepository>();
     services.AddTransient<IPlayerRepository, PlayerRepository>();
@@ -25,11 +25,6 @@ static AppStart BuildConfig()
     services.AddTransient<AppStart>();
 
     var serviceProvider = services.BuildServiceProvider();
-
-    var userRepo = serviceProvider.GetService<IUserRepository>();
-    var playerRepo = serviceProvider.GetService<IPlayerRepository>();
-
-    var logger = serviceProvider.GetService<ILogger<Program>>();
 
     //logger.LogInformation("Closing Application");
     AppStart app = serviceProvider.GetService<AppStart>();

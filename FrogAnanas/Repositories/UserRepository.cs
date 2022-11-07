@@ -1,17 +1,13 @@
 ﻿using FrogAnanas.Context;
 using FrogAnanas.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FrogAnanas.Repositories
 {
     public class UserRepository : IUserRepository
     {
         private readonly ApplicationContext context;
+        object locker = new object();
         public UserRepository(ApplicationContext context)
         {
             this.context = context;
@@ -25,48 +21,53 @@ namespace FrogAnanas.Repositories
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
 
-        public async Task<User> GetUserAsync(long userId)
+        public User GetUserAsync(long userId)
         {
-            return await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            lock (locker)
+            {
+                return context.Users.FirstOrDefault(x => x.Id == userId);
+            }
         }
-        public async Task<User> GetUserWithPlayerAsync(long userId)
+        public User GetUserWithPlayerAsync(long userId)
         {
-            var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
-            var player = await context.Players.FirstOrDefaultAsync(x => x.Id == user.PlayerId);
-            return user;
+            lock(locker)
+            {
+                var user = context.Users.FirstOrDefault(x => x.Id == userId);
+                var player = context.Players.FirstOrDefault(x => x.Id == (user != null ? user.PlayerId : -1));
+                return user;
+            }
         }
 
-        public async Task SetCurrentEvent(long userId, EventType currEvent)
+        public void SetCurrentEvent(long userId, EventType currEvent)
         {
-            var user = await GetUserAsync(userId);
+            var user = GetUserAsync(userId);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
             user.UserEventId = (int)currEvent;
-            await context.SaveChangesAsync();
+            context.SaveChanges();
         }
         public async Task SetPlayerId(long userId, long playerId)
         {
-            var user = await GetUserAsync(userId);
+            var user = GetUserAsync(userId);
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
             user.PlayerId = playerId;
-            await context.SaveChangesAsync();
+            context.SaveChanges();
         }
 
         public async Task ABOBA()
         {
             if (context.UserEvents.FirstOrDefault() is not null)
                 return;
-            
+
             await context.UserEvents.AddAsync(new UserEvent
             {
                 Id = (int)EventType.HandleStart,

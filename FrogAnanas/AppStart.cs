@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FrogAnanas.Constants;
 using FrogAnanas.Context;
 using FrogAnanas.Handlers.MiddleLevelHandlers;
 using FrogAnanas.Models;
@@ -21,13 +22,11 @@ namespace FrogAnanas
         const string groupUri = "https://vk.com/club216986922";
         public static readonly VkBot bot = new VkBot(token, groupUri);
         private readonly IUserRepository userRepository;
-        private readonly IPlayerRepository playerRepository;
         private readonly RegistrationHandler registrationHandler;
         private readonly PlayerInfoHandler playerInfoHandler;
         public AppStart(IUserRepository userRepository, IPlayerRepository playerRepository, RegistrationHandler registrationHandler, PlayerInfoHandler playerInfoHandler)
         {
             this.userRepository = userRepository;
-            this.playerRepository = playerRepository;
             this.registrationHandler = registrationHandler;
             this.playerInfoHandler = playerInfoHandler;
         }
@@ -45,10 +44,13 @@ namespace FrogAnanas
             var msg = e.Message.Text;
 
             if (PhrasesType.registrationPhrases.Contains(msg))
+            {
                 registrationHandler.HandleRegistration(sender, e);
+                return;
+            }
 
             var userId = e.Message.FromId ?? -1;
-            var user = await userRepository.GetUserWithPlayerAsync(userId);
+            var user = userRepository.GetUserWithPlayerAsync(userId);
 
             if (user is null || user.PlayerId is null)
                 return;

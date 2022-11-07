@@ -1,4 +1,6 @@
-﻿using FrogAnanas.Models;
+﻿using FrogAnanas.Constants;
+using FrogAnanas.Helpers;
+using FrogAnanas.Models;
 using FrogAnanas.Repositories;
 using System;
 using System.Collections.Generic;
@@ -17,30 +19,23 @@ namespace FrogAnanas.Handlers.JuniorLevelHandlers
         }
         public async void HandlePlayer4(object? sender, MessageReceivedEventArgs e)
         {
-            var keyboard = new KeyboardBuilder();
-            keyboard.AddButton(ConstPhrase.playerInfo, "", KeyboardButtonColor.Positive)
-                    .AddButton(ConstPhrase.playerInventory, "", KeyboardButtonColor.Negative);
-
             await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
             {
                 Message = "Выберите",
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
-                Keyboard = keyboard.Build()
+                Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Default, ConstPhrase.playerInfo, ConstPhrase.playerInventory)
             });
         }
 
         public async void HandlePlayerInfo5(User user, object? sender, MessageReceivedEventArgs e)
         {
-            var keyboard = new KeyboardBuilder();
-            keyboard.AddButton(ConstPhrase.player, "", KeyboardButtonColor.Default);
-
             await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
             {
                 Message = $"Имя: {user.Player.Name}\n Атака:{user.Player.DPS}\n Защита:{user.Player.Defence}\n Здоровье: {user.Player.HP}\n Sex:{user.Player.Gender}",
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
-                Keyboard = keyboard.Build()
+                Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Default, ConstPhrase.player)
             });
         }
 
@@ -51,6 +46,7 @@ namespace FrogAnanas.Handlers.JuniorLevelHandlers
                 Message = $"Здесь будет инвентарь и не будет кнопки персонажа",
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
+                Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Default, ConstPhrase.player)
             });
         }
     }
