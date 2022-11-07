@@ -36,7 +36,9 @@ namespace FrogAnanas.Repositories
         }
         public async Task<User> GetUserWithPlayerAsync(long userId)
         {
-            return await context.Users.Include(x=>x.Player).FirstOrDefaultAsync(x => x.Id == userId);
+            var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+            var player = await context.Players.FirstOrDefaultAsync(x => x.Id == user.PlayerId);
+            return user;
         }
 
         public async Task SetCurrentEvent(long userId, EventType currEvent)

@@ -1,4 +1,7 @@
-﻿namespace FrogAnanas.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace FrogAnanas.Models
 {
     public class Player
     {
@@ -14,6 +17,7 @@
         public int HP { get; set; }
         public double Initiative { get; set; }
         public int Perception { get; set; }
+        public User User { get; set; }
     }
 
     public enum Gender

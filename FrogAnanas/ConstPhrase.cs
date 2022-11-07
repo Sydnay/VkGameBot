@@ -16,4 +16,9 @@ namespace FrogAnanas
         public const string playerInfo = "Характеристики";
         public const string playerInventory = "Инвентарь";
     }
+    public static class PhrasesType
+    {
+        public static List<string> registrationPhrases = new List<string> { ConstPhrase.start, ConstPhrase.createHero, ConstPhrase.male, ConstPhrase.female };
+        public static List<string> playerInfoPhrases = new List<string> { ConstPhrase.player, ConstPhrase.playerInfo, ConstPhrase.playerInventory};
+    }
 }
