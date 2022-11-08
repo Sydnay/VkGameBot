@@ -12,7 +12,7 @@ namespace FrogAnanas.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public string Name { get; set; }
-        public List<User> Users { get; set; }
+        public List<Player> Players { get; set; }
     }
     public enum EventType
     {
@@ -22,6 +22,5 @@ namespace FrogAnanas.Models
         HandlePlayer = 4,
         HandlePlayerInfo = 5,
         HandlePlayerInventory = 6,
-
     }
 }

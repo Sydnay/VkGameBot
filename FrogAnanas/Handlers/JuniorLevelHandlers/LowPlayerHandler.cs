@@ -12,8 +12,8 @@ namespace FrogAnanas.Handlers.JuniorLevelHandlers
 {
     public class LowPlayerHandler
     {
-        private readonly IUserRepository userRepository;
-        public LowPlayerHandler(IUserRepository repository)
+        private readonly IPlayerRepository userRepository;
+        public LowPlayerHandler(IPlayerRepository repository)
         {
             this.userRepository = repository;
         }
@@ -21,7 +21,7 @@ namespace FrogAnanas.Handlers.JuniorLevelHandlers
         {
             await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
             {
-                Message = "Выберите",
+                Message = "Выберите информацию о персоонаже",
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
                 Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Default, ConstPhrase.playerInfo, ConstPhrase.playerInventory)

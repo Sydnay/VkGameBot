@@ -5,7 +5,9 @@ namespace FrogAnanas.Models
 {
     public class Player
     {
-        public long Id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public long UserId { get; set; }
         public string Name { get; set; }
         public Gender Gender { get; set; }
         public int DPS { get; set; }
@@ -17,6 +19,11 @@ namespace FrogAnanas.Models
         public int HP { get; set; }
         public double Initiative { get; set; }
         public int Perception { get; set; }
+
+        public int UserEventId { get; set; }
+        public UserEvent UserEvent { get; set; }
+        public DateTime CreateTime { get; set; } = DateTime.Now;
+        public DateTime UpdateTime { get; set; } = DateTime.Now;
     }
 
     public enum Gender

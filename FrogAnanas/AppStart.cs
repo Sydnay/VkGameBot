@@ -21,14 +21,14 @@ namespace FrogAnanas
         const string token = "vk1.a.7KyPdYKqp5ANTIBuBFlNKW3wXvLJFE3AsVoc8zm-mmU8KcInZ6-EgrhXxbdp17HSt6Q52gllyfFp2JynQ6ZGBWWYhDyfsE9S2ir9APQNNtL_dglHec77iUB2fSFBd7cRmRhpxeoVnQvTbdIa225E8PSPb6YNytUNiybnK9aIyjN6Q-oHT_F3bopuEOE6_81t5x82gbgr3tlkmYbkoPHvlA";
         const string groupUri = "https://vk.com/club216986922";
         public static readonly VkBot bot = new VkBot(token, groupUri);
-        private readonly UserCachedRepository userCachedRepository;
         private readonly RegistrationHandler registrationHandler;
         private readonly PlayerInfoHandler playerInfoHandler;
-        public AppStart(UserCachedRepository userCachedRepository, IPlayerRepository playerRepository, RegistrationHandler registrationHandler, PlayerInfoHandler playerInfoHandler)
+        private readonly IPlayerRepository playerRepository;
+        public AppStart(IPlayerRepository playerRepository, RegistrationHandler registrationHandler, PlayerInfoHandler playerInfoHandler)
         {
-            this.userCachedRepository = userCachedRepository;
             this.registrationHandler = registrationHandler;
             this.playerInfoHandler = playerInfoHandler;
+            this.playerRepository = playerRepository;
         }
         public async void Start()
         {
@@ -49,13 +49,13 @@ namespace FrogAnanas
             }
 
             var userId = e.Message.FromId ?? -1;
-            var user = userCachedRepository.GetUser(userId);
+            var player = playerRepository.GetPlayer(userId);
 
-            if (user is null || user.PlayerId is null)
+            if (player is null)
                 return;
 
             if (PhrasesType.playerInfoPhrases.Contains(msg))
-                playerInfoHandler.HandlePlayerInfo(user, sender, e);
+                playerInfoHandler.HandlePlayerInfo(player, sender, e);
         }
     }
 }

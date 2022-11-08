@@ -14,9 +14,7 @@ static AppStart BuildConfig()
     var services = new ServiceCollection()
     .AddDbContextFactory<ApplicationContext>(lifetime:ServiceLifetime.Singleton);
 
-    services.AddTransient<IUserRepository, UserRepository>();
     services.AddTransient<IPlayerRepository, PlayerRepository>();
-    services.AddSingleton<UserCachedRepository>();
 
     services.AddTransient<LowPlayerHandler>();
 
@@ -27,12 +25,9 @@ static AppStart BuildConfig()
 
     var serviceProvider = services.BuildServiceProvider();
 
-    var userRepo = serviceProvider.GetService<IUserRepository>();
-    var userCacheRepo = serviceProvider.GetService<UserCachedRepository>();
+    var userRepo = serviceProvider.GetService<IPlayerRepository>();
 
     userRepo.ABOBA();
-    Thread.Sleep(500);
-    userCacheRepo.UpdateCache();
 
     //logger.LogInformation("Closing Application");
     AppStart app = serviceProvider.GetService<AppStart>();

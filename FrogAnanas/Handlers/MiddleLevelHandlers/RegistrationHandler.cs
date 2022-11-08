@@ -13,40 +13,40 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
 {
     public class RegistrationHandler
     {
-        private readonly IUserRepository userRepository;
         private readonly IPlayerRepository playerRepository;
-        private readonly UserCachedRepository userCachedRepository;
-        public RegistrationHandler(IUserRepository userRepository, IPlayerRepository playerRepository, UserCachedRepository userCachedRepository)
+        public RegistrationHandler(IPlayerRepository playerRepository)
         {
-            this.userRepository = userRepository;
             this.playerRepository = playerRepository;
-            this.userCachedRepository = userCachedRepository;
         }
-        public async void HandleRegistration(object? sender, MessageReceivedEventArgs e)
+        public void HandleRegistration(object? sender, MessageReceivedEventArgs e)
         {
             var msg = e.Message.Text;
 
             var userId = e.Message.FromId ?? -1;
-            var user = userCachedRepository.GetUser(userId);
+            var player = playerRepository.GetPlayer(userId);
+
             switch (msg)
             {
                 case ConstPhrase.start:
-                    if (user is not null) break;
-                    HandleStart1(sender, e);
+                    if (player is null)
+                    {
+                        player = new Player();
+                        HandleStart1(sender, e);
+                    }
                     break;
 
                 case ConstPhrase.createHero:
-                    if (user.UserEventId == (int)EventType.HandleStart)
+                    if (player is not null && player.UserEventId == (int)EventType.HandleStart)
                     {
-                        userRepository.SetCurrentEvent(userId, EventType.HandleGender);
+                        playerRepository.SetCurrentEvent(userId, EventType.HandleGender);
                         HandleGender2(sender, e);
                     }
                     break;
 
                 case ConstPhrase.male or ConstPhrase.female:
-                    if (user.PlayerId is null && user.UserEventId == (int)EventType.HandleGender)
+                    if (player is not null && player.UserEventId == (int)EventType.HandleGender)
                     {
-                        userRepository.SetCurrentEvent(userId, EventType.HandleCreation);
+                        playerRepository.SetCurrentEvent(userId, EventType.HandleCreation);
                         HandleCreation3(userId,sender, e);
                     }
                     break;
@@ -58,13 +58,12 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
         }
         async void HandleStart1(object? sender, MessageReceivedEventArgs e)
         {
-            await userRepository.AddUser(new User
+            playerRepository.AddPlayer(new Player
             {
-                Id = e.Message.FromId ?? -1,
-                UserEventId = (int)EventType.HandleStart
+                UserId = e.Message.FromId ?? -1,
+                UserEventId = (int)EventType.HandleStart,
+                Name = "Заблудший путник"
             });
-
-            userCachedRepository.UpdateCache();
 
             await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
             {
@@ -79,9 +78,6 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
 
         async void HandleGender2(object? sender, MessageReceivedEventArgs e)
         {
-            var userId = e.Message.FromId ?? -1;
-            var user = userRepository.GetUserAsync(userId);
-
             await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
             {
                 Message = "Выберите пол",
@@ -90,29 +86,13 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
                 Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Positive, ConstPhrase.male, ConstPhrase.female)
             });
 
-
             Console.WriteLine($"HandleGender");
         }
 
         async void HandleCreation3(long userId, object? sender, MessageReceivedEventArgs e)
         {
-            var playerId = await playerRepository.AddPlayer(new Player
-            {
-                Name = (await AppStart.bot.Api.Users.GetAsync(new List<long> { e.Message.FromId ?? (long)-1 })).FirstOrDefault()!.FirstName,
-                Gender = e.Message.Text == ConstPhrase.female ? Gender.Female : Gender.Male,
-                DPS = 1,
-                Defence = 3,
-                Accuracy = 0.8,
-                Evation = 0.2,
-                CritChance = 0.1,
-                MultipleCrit = 1.1,
-                HP = 50,
-                Initiative = 0.8,
-                Perception = 2
-            });
-
-            await userRepository.SetPlayerId(userId, playerId);
-            userCachedRepository.UpdateCache();
+            playerRepository.SetDefaultStats(userId, e.Message.Text == ConstPhrase.female ? Gender.Female : Gender.Male,
+                (await AppStart.bot.Api.Users.GetAsync(new List<long> { e.Message.FromId ?? -1 })).FirstOrDefault()!.FirstName);
 
             await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
             {

@@ -13,33 +13,30 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
     public class PlayerInfoHandler
     {
         private readonly LowPlayerHandler handler;
-        private readonly IUserRepository userRepository;
         private readonly IPlayerRepository playerRepository;
-        public PlayerInfoHandler(LowPlayerHandler handler, IUserRepository userRepository, IPlayerRepository playerRepository)
+        public PlayerInfoHandler(LowPlayerHandler handler, IPlayerRepository playerRepository)
         {
             this.handler = handler;
-            this.userRepository = userRepository;
             this.playerRepository = playerRepository;
         }
-        public async void HandlePlayerInfo(User user, object? sender, MessageReceivedEventArgs e)
+        public async void HandlePlayerInfo(Player player, object? sender, MessageReceivedEventArgs e)
         {
             var msg = e.Message.Text;
-            var player = playerRepository.GetPlayer(user.PlayerId);
 
-            switch (msg, user.UserEventId)
+            switch (msg, player.UserEventId)
             {
                 case (ConstPhrase.player, not (int)EventType.HandlePlayer):
-                    userRepository.SetCurrentEvent(user.Id, EventType.HandlePlayer);
+                    playerRepository.SetCurrentEvent(player.UserId, EventType.HandlePlayer);
                     handler.HandlePlayer4(sender, e);
                     break;
 
                 case (ConstPhrase.playerInfo, (int)EventType.HandlePlayer):
-                    userRepository.SetCurrentEvent(user.Id, EventType.HandlePlayerInfo);
+                    playerRepository.SetCurrentEvent(player.UserId, EventType.HandlePlayerInfo);
                     handler.HandlePlayerInfo5(player, sender, e);
                     break;
 
                 case (ConstPhrase.playerInventory, (int)EventType.HandlePlayer):
-                    userRepository.SetCurrentEvent(user.Id, EventType.HandlePlayerInventory);
+                    playerRepository.SetCurrentEvent(player.UserId, EventType.HandlePlayerInventory);
                     handler.HandlePlayerInventory6(sender, e);
                     break;
 

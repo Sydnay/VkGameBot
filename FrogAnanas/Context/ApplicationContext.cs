@@ -10,7 +10,6 @@ namespace FrogAnanas.Context
 {
     public class ApplicationContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<UserEvent> UserEvents { get; set; }
 
