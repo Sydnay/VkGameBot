@@ -7,22 +7,12 @@ using System.Threading.Tasks;
 
 namespace FrogAnanas.Models
 {
-    public class UserEvent
+    public class Mastery
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public string Name { get; set; }
-        public List<Player> Players { get; set; }
-    }
-    public enum EventType
-    {
-        HandleStart = 1,
-        HandleGender,
-        HandleCreation,
-        HandleFirstRole,
-        HandleAcceptFirstRole,
-        HandlePlayer,
-        HandlePlayerInfo,
-        HandlePlayerInventory,
+        public string Description { get; set; } = "Какое-то описание мастерки";
+        public List<Skill> Skills { get; set; }
     }
 }

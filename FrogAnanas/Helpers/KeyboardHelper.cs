@@ -18,5 +18,18 @@ namespace FrogAnanas.Helpers
 
             return keyboard.Build();
         }
+        public static MessageKeyboard CreateMasteryKeyboard(params string[] messages)
+        {
+            var keyboard = new KeyboardBuilder();
+
+            for (int i = 0; i < messages.Length; i++)
+            {
+                keyboard.AddButton(messages[i], "", KeyboardButtonColor.Default);
+                if (i < messages.Length - 1)
+                    keyboard.AddLine();
+            }
+
+            return keyboard.Build();
+        }
     }
 }

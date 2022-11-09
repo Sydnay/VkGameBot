@@ -14,9 +14,11 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
     public class RegistrationHandler
     {
         private readonly IPlayerRepository playerRepository;
-        public RegistrationHandler(IPlayerRepository playerRepository)
+        private readonly IMasteryRepository masteryRepository;
+        public RegistrationHandler(IPlayerRepository playerRepository, IMasteryRepository masteryRepository)
         {
             this.playerRepository = playerRepository;
+            this.masteryRepository = masteryRepository;
         }
         public void HandleRegistration(object? sender, MessageReceivedEventArgs e)
         {
@@ -48,6 +50,27 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
                     {
                         playerRepository.SetCurrentEvent(userId, EventType.HandleCreation);
                         HandleCreation3(userId,sender, e);
+                    }
+                    break;
+                case ConstPhrase.masterySword or ConstPhrase.masteryDagger or ConstPhrase.masteryDoubleSword or ConstPhrase.masteryAxe:
+                    if (player is not null && player.UserEventId == (int)EventType.HandleCreation)
+                    {
+                        playerRepository.SetCurrentEvent(userId, EventType.HandleFirstRole);
+                        HandleFirstRole4(userId, sender, e);
+                    }
+                    break;
+                case ConstPhrase.accept:
+                    if (player is not null && player.UserEventId == (int)EventType.HandleFirstRole)
+                    {
+                        playerRepository.SetCurrentEvent(userId, EventType.HandleAcceptFirstRole);
+                        HandleAcceptFristRole5(userId, sender, e);
+                    }
+                    break;
+                case ConstPhrase.goBack:
+                    if (player is not null && player.UserEventId == (int)EventType.HandleFirstRole)
+                    {
+                        playerRepository.SetCurrentEvent(userId, EventType.HandleCreation);
+                        HandleGoBackFristRole5(sender, e);
                     }
                     break;
 
@@ -96,15 +119,53 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
 
             await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
             {
+                Message = $"Персоонаж успешно создан! \nДавайте выберем первую роль",
+                PeerId = e.Message.PeerId,
+                RandomId = Math.Abs(Environment.TickCount),
+                Keyboard = KeyboardHelper.CreateMasteryKeyboard(ConstPhrase.masterySword, ConstPhrase.masteryDoubleSword, ConstPhrase.masteryAxe, ConstPhrase.masteryDagger )
+            });
+
+            Console.WriteLine($"HandleCreation");
+        }
+
+        async void HandleFirstRole4(long userId, object? sender, MessageReceivedEventArgs e)
+        {
+            var mastery = masteryRepository.GetMastery(e.Message.Text);
+            playerRepository.SetMastery(userId, mastery.Id);
+
+            await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
+            {
+                Message = $"{e.Message.Text}: {mastery.Description}",
+                PeerId = e.Message.PeerId,
+                RandomId = Math.Abs(Environment.TickCount),
+                Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Default, ConstPhrase.accept, ConstPhrase.goBack)
+            });
+
+            Console.WriteLine($"HandleCreation");
+        }
+        async void HandleAcceptFristRole5(long userId, object? sender, MessageReceivedEventArgs e)
+        {
+            await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
+            {
                 Message = $"Персоонаж успешно создан!",
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
                 Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Default, ConstPhrase.player)
             });
 
+            Console.WriteLine($"HandleCreation");
+        }
+        async void HandleGoBackFristRole5(object? sender, MessageReceivedEventArgs e)
+        {
+            await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
+            {
+                Message = $"(сменить мастерство можно будет чуть позже в любое время)",
+                PeerId = e.Message.PeerId,
+                RandomId = Math.Abs(Environment.TickCount),
+                Keyboard = KeyboardHelper.CreateMasteryKeyboard(ConstPhrase.masterySword, ConstPhrase.masteryDoubleSword, ConstPhrase.masteryAxe, ConstPhrase.masteryDagger)
+            });
 
             Console.WriteLine($"HandleCreation");
         }
-
     }
 }
