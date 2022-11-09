@@ -14,6 +14,7 @@ namespace FrogAnanas.Repositories
         void AddPlayer (Player player);
         void SetCurrentEvent(long userId, EventType currEvent);
         void SetDefaultStats(long userId, Gender gender, string name);
+        void SetMastery(long userId, int masteryId);
         Task ABOBA();
     }
 }

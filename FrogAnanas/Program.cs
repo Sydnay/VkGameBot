@@ -5,6 +5,7 @@ using FrogAnanas.Handlers.MiddleLevelHandlers;
 using FrogAnanas.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 
 var app = BuildConfig();
 app.Start();
@@ -15,6 +16,7 @@ static AppStart BuildConfig()
     .AddDbContextFactory<ApplicationContext>(lifetime:ServiceLifetime.Singleton);
 
     services.AddTransient<IPlayerRepository, PlayerRepository>();
+    services.AddTransient<IMasteryRepository, MasteryRepository>();
 
     services.AddTransient<LowPlayerHandler>();
 

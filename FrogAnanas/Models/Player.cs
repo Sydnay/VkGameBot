@@ -20,8 +20,11 @@ namespace FrogAnanas.Models
         public double Initiative { get; set; }
         public int Perception { get; set; }
 
+        public int? MasteryId { get; set; }
+        public Mastery Mastery { get; set; }
         public int UserEventId { get; set; }
         public UserEvent UserEvent { get; set; }
+        public List<MasteryPlayer> MasteryPlayers { get; set; }
         public DateTime CreateTime { get; set; } = DateTime.Now;
         public DateTime UpdateTime { get; set; } = DateTime.Now;
     }

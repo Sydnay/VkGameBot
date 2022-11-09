@@ -11,6 +11,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.10" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.18.0" />
     <PackageReference Include="VkBotFramework" Version="1.0.0" />
   </ItemGroup>
 
