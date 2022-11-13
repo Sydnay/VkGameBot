@@ -11,8 +11,11 @@ namespace FrogAnanas.Repositories
     {
         Player GetPlayer (long userId);
         List<Player> GetAllPlayers();
+        List<Resource> GetPlayerResources(long userId);
+        List<Item> GetPlayerItems(long userId);
+        List<Skill> GetPlayerSkills(long userId);
         void AddPlayer (Player player);
-        void SetCurrentEvent(long userId, EventType currEvent);
+        void SetEvent(long userId, EventType currEvent);
         void SetDefaultStats(long userId, Gender gender, string name);
         void SetMastery(long userId, int masteryId);
         Task ABOBA();

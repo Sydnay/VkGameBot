@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VkBotFramework.Models;
+using VkNet.Model.Attachments;
 
 namespace FrogAnanas.Handlers.MiddleLevelHandlers
 {
@@ -29,7 +30,7 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
 
             switch (msg)
             {
-                case ConstPhrase.start:
+                case RegistrationPhrase.start:
                     if (player is null)
                     {
                         player = new Player();
@@ -37,39 +38,39 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
                     }
                     break;
 
-                case ConstPhrase.createHero:
+                case RegistrationPhrase.createHero:
                     if (player is not null && player.UserEventId == (int)EventType.HandleStart)
                     {
-                        playerRepository.SetCurrentEvent(userId, EventType.HandleGender);
+                        playerRepository.SetEvent(userId, EventType.HandleGender);
                         HandleGender2(sender, e);
                     }
                     break;
 
-                case ConstPhrase.male or ConstPhrase.female:
+                case RegistrationPhrase.male or RegistrationPhrase.female:
                     if (player is not null && player.UserEventId == (int)EventType.HandleGender)
                     {
-                        playerRepository.SetCurrentEvent(userId, EventType.HandleCreation);
+                        playerRepository.SetEvent(userId, EventType.HandleCreation);
                         HandleCreation3(userId,sender, e);
                     }
                     break;
-                case ConstPhrase.masterySword or ConstPhrase.masteryDagger or ConstPhrase.masteryDoubleSword or ConstPhrase.masteryAxe:
+                case RegistrationPhrase.masterySword or RegistrationPhrase.masteryDagger or RegistrationPhrase.masteryDoubleSword or RegistrationPhrase.masteryAxe:
                     if (player is not null && player.UserEventId == (int)EventType.HandleCreation)
                     {
-                        playerRepository.SetCurrentEvent(userId, EventType.HandleFirstRole);
+                        playerRepository.SetEvent(userId, EventType.HandleFirstRole);
                         HandleFirstRole4(userId, sender, e);
                     }
                     break;
-                case ConstPhrase.accept:
+                case RegistrationPhrase.accept:
                     if (player is not null && player.UserEventId == (int)EventType.HandleFirstRole)
                     {
-                        playerRepository.SetCurrentEvent(userId, EventType.HandleAcceptFirstRole);
+                        playerRepository.SetEvent(userId, EventType.HandleAcceptFirstRole);
                         HandleAcceptFristRole5(userId, sender, e);
                     }
                     break;
-                case ConstPhrase.goBack:
+                case RegistrationPhrase.goBack:
                     if (player is not null && player.UserEventId == (int)EventType.HandleFirstRole)
                     {
-                        playerRepository.SetCurrentEvent(userId, EventType.HandleCreation);
+                        playerRepository.SetEvent(userId, EventType.HandleCreation);
                         HandleGoBackFristRole5(sender, e);
                     }
                     break;
@@ -85,15 +86,17 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
             {
                 UserId = e.Message.FromId ?? -1,
                 UserEventId = (int)EventType.HandleStart,
-                Name = "Заблудший путник"
+                Name = "Заблудший путник",
+                MaxStage = 1
+                
             });
 
-            await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
+            AppStart.bot.Api.Messages.Send(new MessagesSendParams
             {
                 Message = "Добро пожаловать узбек \nДавайте создадим персоонажа",
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
-                Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Positive, ConstPhrase.createHero)
+                Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Positive, RegistrationPhrase.createHero)
             });
 
             Console.WriteLine($"HandleStart");
@@ -101,12 +104,12 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
 
         async void HandleGender2(object? sender, MessageReceivedEventArgs e)
         {
-            await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
+            AppStart.bot.Api.Messages.Send(new MessagesSendParams
             {
                 Message = "Выберите пол",
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
-                Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Positive, ConstPhrase.male, ConstPhrase.female)
+                Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Positive, RegistrationPhrase.male, RegistrationPhrase.female)
             });
 
             Console.WriteLine($"HandleGender");
@@ -114,15 +117,15 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
 
         async void HandleCreation3(long userId, object? sender, MessageReceivedEventArgs e)
         {
-            playerRepository.SetDefaultStats(userId, e.Message.Text == ConstPhrase.female ? Gender.Female : Gender.Male,
+            playerRepository.SetDefaultStats(userId, e.Message.Text == RegistrationPhrase.female ? Gender.Female : Gender.Male,
                 (await AppStart.bot.Api.Users.GetAsync(new List<long> { e.Message.FromId ?? -1 })).FirstOrDefault()!.FirstName);
 
-            await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
+            AppStart.bot.Api.Messages.Send(new MessagesSendParams
             {
                 Message = $"Персоонаж успешно создан! \nДавайте выберем первую роль",
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
-                Keyboard = KeyboardHelper.CreateMasteryKeyboard(ConstPhrase.masterySword, ConstPhrase.masteryDoubleSword, ConstPhrase.masteryAxe, ConstPhrase.masteryDagger )
+                Keyboard = KeyboardHelper.CreateOneColumns(KeyboardButtonColor.Positive, RegistrationPhrase.masterySword, RegistrationPhrase.masteryDoubleSword, RegistrationPhrase.masteryAxe, RegistrationPhrase.masteryDagger )
             });
 
             Console.WriteLine($"HandleCreation");
@@ -133,36 +136,36 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
             var mastery = masteryRepository.GetMastery(e.Message.Text);
             playerRepository.SetMastery(userId, mastery.Id);
 
-            await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
+            AppStart.bot.Api.Messages.Send(new MessagesSendParams
             {
                 Message = $"{e.Message.Text}: {mastery.Description}",
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
-                Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Default, ConstPhrase.accept, ConstPhrase.goBack)
+                Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Default, RegistrationPhrase.accept, RegistrationPhrase.goBack)
             });
 
             Console.WriteLine($"HandleCreation");
         }
         async void HandleAcceptFristRole5(long userId, object? sender, MessageReceivedEventArgs e)
         {
-            await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
+            AppStart.bot.Api.Messages.Send(new MessagesSendParams
             {
                 Message = $"Персоонаж успешно создан!",
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
-                Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Default, ConstPhrase.player)
+                Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Positive, AdventurePhrase.START_ADVENTURE)
             });
 
             Console.WriteLine($"HandleCreation");
         }
         async void HandleGoBackFristRole5(object? sender, MessageReceivedEventArgs e)
         {
-            await AppStart.bot.Api.Messages.SendAsync(new MessagesSendParams
+            AppStart.bot.Api.Messages.Send(new MessagesSendParams
             {
                 Message = $"(сменить мастерство можно будет чуть позже в любое время)",
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
-                Keyboard = KeyboardHelper.CreateMasteryKeyboard(ConstPhrase.masterySword, ConstPhrase.masteryDoubleSword, ConstPhrase.masteryAxe, ConstPhrase.masteryDagger)
+                Keyboard = KeyboardHelper.CreateOneColumns(KeyboardButtonColor.Positive, RegistrationPhrase.masterySword, RegistrationPhrase.masteryDoubleSword, RegistrationPhrase.masteryAxe, RegistrationPhrase.masteryDagger)
             });
 
             Console.WriteLine($"HandleCreation");

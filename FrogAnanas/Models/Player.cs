@@ -24,7 +24,11 @@ namespace FrogAnanas.Models
         public Mastery Mastery { get; set; }
         public int UserEventId { get; set; }
         public UserEvent UserEvent { get; set; }
+        public int MaxStage { get; set; }
+        public Stage Stage { get; set; }
         public List<MasteryPlayer> MasteryPlayers { get; set; }
+        public List<ItemsPlayer> ItemsPlayers { get; set; }
+        public List<ResourcesPlayer> ResourcesPlayers { get; set; }
         public DateTime CreateTime { get; set; } = DateTime.Now;
         public DateTime UpdateTime { get; set; } = DateTime.Now;
     }

@@ -6,6 +6,7 @@ global using VkNet.Model.Keyboard;
 global using VkNet.Model.RequestParams;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using FrogAnanas.Constants;
@@ -23,11 +24,13 @@ namespace FrogAnanas
         public static readonly VkBot bot = new VkBot(token, groupUri);
         private readonly RegistrationHandler registrationHandler;
         private readonly PlayerInfoHandler playerInfoHandler;
+        private readonly AdventureHandler adventureHandler;
         private readonly IPlayerRepository playerRepository;
-        public AppStart(IPlayerRepository playerRepository, RegistrationHandler registrationHandler, PlayerInfoHandler playerInfoHandler)
+        public AppStart(IPlayerRepository playerRepository, RegistrationHandler registrationHandler, PlayerInfoHandler playerInfoHandler, AdventureHandler adventureHandler)
         {
             this.registrationHandler = registrationHandler;
             this.playerInfoHandler = playerInfoHandler;
+            this.adventureHandler = adventureHandler;
             this.playerRepository = playerRepository;
         }
         public async void Start()
@@ -35,7 +38,8 @@ namespace FrogAnanas
             bot.OnMessageReceived += HandleMessage;
 
             Console.WriteLine("SstartReceiveng");
-            bot.Start();
+            bot.Start(); 
+            
             Console.ReadLine();
         }
         async void HandleMessage(object? sender, MessageReceivedEventArgs e)
@@ -56,6 +60,8 @@ namespace FrogAnanas
 
             if (PhrasesType.playerInfoPhrases.Contains(msg))
                 playerInfoHandler.HandlePlayerInfo(player, sender, e);
+            if (PhrasesType.adventurePhrases.Contains(msg))
+                adventureHandler.HandleAdventure(player, sender, e);
         }
     }
 }

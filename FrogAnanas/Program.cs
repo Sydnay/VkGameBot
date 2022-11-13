@@ -19,9 +19,11 @@ static AppStart BuildConfig()
     services.AddTransient<IMasteryRepository, MasteryRepository>();
 
     services.AddTransient<LowPlayerHandler>();
+    services.AddTransient<LowAdventureHandler>();
 
     services.AddTransient<RegistrationHandler>();
     services.AddTransient<PlayerInfoHandler>();
+    services.AddTransient<AdventureHandler>();
 
     services.AddTransient<AppStart>();
 

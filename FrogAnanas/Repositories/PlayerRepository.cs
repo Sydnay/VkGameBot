@@ -1,7 +1,6 @@
 ﻿using FrogAnanas.Constants;
 using FrogAnanas.Context;
 using FrogAnanas.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace FrogAnanas.Repositories
 {
@@ -16,10 +15,33 @@ namespace FrogAnanas.Repositories
         }
         public Player GetPlayer(long userId)
         {
-            lock(locker)
-                return context.Players.FirstOrDefault(x=>x.UserId == userId);
+            lock (locker)
+                return context.Players.FirstOrDefault(x => x.UserId == userId);
         }
-
+        public List<Resource> GetPlayerResources(long userId)
+        {
+            var resourcesPlayerId = context.ResourcesPlayers.Where(x => x.UserId == userId).Select(x => x.ResourceId).ToList();
+            var resources = context.Resources.Where(x => resourcesPlayerId.Contains(x.Id)).ToList();
+            return resources;
+        }
+        public List<Item> GetPlayerItems(long userId)
+        {
+            var itemsPlayerId = context.ItemsPlayers.Where(x => x.UserId == userId).Select(x => x.ItemId).ToList();
+            var items = context.Items.Where(x => itemsPlayerId.Contains(x.Id)).ToList();
+            return items;
+        }
+        public List<Skill> GetPlayerSkills(long userId)
+        {
+            var skillPlayers = context.MasteryPlayers.Where(x => x.UserId == userId).ToList();
+            var skills = new List<Skill>();
+            foreach (var sp in skillPlayers)
+            {
+                var skill = context.Skills.FirstOrDefault(x => x.MasteryId == sp.MasteryId && x.LvlRequirement < sp.CurrentLvl);
+                if (skill is not null)
+                    skills.Add(skill);
+            }
+            return skills;
+        }
         public List<Player> GetAllPlayers()
         {
             lock (locker)
@@ -52,9 +74,20 @@ namespace FrogAnanas.Repositories
                     UserId = userId,
                 });
             }
+            context.ItemsPlayers.Add(new ItemsPlayer
+            {
+                ItemId = 1,
+                UserId = userId,
+            });
+            context.ResourcesPlayers.Add(new ResourcesPlayer
+            {
+                ResourceId = 1,
+                UserId = userId,
+            });
+
         }
 
-        public void SetCurrentEvent(long userId, EventType currEvent)
+        public void SetEvent(long userId, EventType currEvent)
         {
             var player = GetPlayer(userId);
 
@@ -106,77 +139,42 @@ namespace FrogAnanas.Repositories
             if (context.UserEvents.FirstOrDefault() is not null)
                 return;
 
-            await context.UserEvents.AddAsync(new UserEvent
-            {
-                Id = (int)EventType.HandleStart,
-                Name = EventType.HandleStart.ToString()
-            });
-            await context.UserEvents.AddAsync(new UserEvent
-            {
-                Id = (int)EventType.HandleGender,
-                Name = EventType.HandleGender.ToString()
-            });
-            await context.UserEvents.AddAsync(new UserEvent
-            {
-                Id = (int)EventType.HandleCreation,
-                Name = EventType.HandleCreation.ToString()
-            });
-            await context.UserEvents.AddAsync(new UserEvent
-            {
-                Id = (int)EventType.HandlePlayer,
-                Name = EventType.HandlePlayer.ToString()
-            });
-            await context.UserEvents.AddAsync(new UserEvent
-            {
-                Id = (int)EventType.HandlePlayerInfo,
-                Name = EventType.HandlePlayerInfo.ToString()
-            });
-            await context.UserEvents.AddAsync(new UserEvent
-            {
-                Id = (int)EventType.HandlePlayerInventory,
-                Name = EventType.HandlePlayerInventory.ToString()
-            });
-            await context.UserEvents.AddAsync(new UserEvent
-            {
-                Id = (int)EventType.HandleAcceptFirstRole,
-                Name = EventType.HandleAcceptFirstRole.ToString()
-            });
-            await context.UserEvents.AddAsync(new UserEvent
-            {
-                Id = (int)EventType.HandleFirstRole,
-                Name = EventType.HandleFirstRole.ToString()
-            });
-
+            foreach (EventType @event in Enum.GetValues(typeof(EventType)))
+                await context.UserEvents.AddAsync(new UserEvent
+                {
+                    Id = (int)@event,
+                    Name = @event.ToString()
+                });
 
             var masterySwordId = (await context.Masteries.AddAsync(new Mastery
             {
                 Id = 1,
-                Name = ConstPhrase.masterySword
+                Name = RegistrationPhrase.masterySword
             })).Entity.Id;
             var masteryDaggerId = (await context.Masteries.AddAsync(new Mastery
             {
                 Id = 2,
-                Name = ConstPhrase.masteryDagger
+                Name = RegistrationPhrase.masteryDagger
             })).Entity.Id;
             var masteryAxeId = (await context.Masteries.AddAsync(new Mastery
             {
                 Id = 3,
-                Name = ConstPhrase.masteryAxe
+                Name = RegistrationPhrase.masteryAxe
             })).Entity.Id;
             var masteryHummerId = (await context.Masteries.AddAsync(new Mastery
             {
                 Id = 4,
-                Name = ConstPhrase.masteryHummer
+                Name = RegistrationPhrase.masteryHummer
             })).Entity.Id;
             var masteryPeakId = (await context.Masteries.AddAsync(new Mastery
             {
                 Id = 5,
-                Name = ConstPhrase.masteryPeak
+                Name = RegistrationPhrase.masteryPeak
             })).Entity.Id;
             var masteryDoubleSwordId = (await context.Masteries.AddAsync(new Mastery
             {
                 Id = 6,
-                Name = ConstPhrase.masteryDoubleSword
+                Name = RegistrationPhrase.masteryDoubleSword
             })).Entity.Id;
 
 
@@ -248,6 +246,45 @@ namespace FrogAnanas.Repositories
                 LvlRequirement = 0,
                 Name = "Удар копьем",
             });
+
+            await context.Stages.AddAsync(new Stage
+            {
+                Id = 1,
+                Description = "1 этаж"
+            });
+            await context.Stages.AddAsync(new Stage
+            {
+                Id = 2,
+                Description = "2 этаж"
+            });
+            await context.Stages.AddAsync(new Stage
+            {
+                Id = 3,
+                Description = "3 этаж"
+            });
+            await context.Stages.AddAsync(new Stage
+            {
+                Id = 4,
+                Description = "4 этаж"
+            });
+            await context.Stages.AddAsync(new Stage
+            {
+                Id = 5,
+                Description = "5 этаж"
+            });
+
+            await context.Items.AddAsync(new Item
+            {
+                Id = 1,
+                Name = "Маленькая бутылка зелья исцеления"
+            });
+
+            await context.Resources.AddAsync(new Resource
+            {
+                Id = 1,
+                Name = "Ветка дерева"
+            });
+
             try
             {
                 await context.SaveChangesAsync();
