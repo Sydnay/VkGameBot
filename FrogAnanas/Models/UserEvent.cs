@@ -29,6 +29,7 @@ namespace FrogAnanas.Models
         HandleStartAdventure,
         HandleCity,
         HandleTower,
+        HandleCloseTower,
         HandleEnterTower,
     }
 }

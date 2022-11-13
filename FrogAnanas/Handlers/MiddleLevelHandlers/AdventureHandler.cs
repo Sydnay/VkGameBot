@@ -50,9 +50,18 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
                 case (AdventurePhrase.TOWER_INFO, (int)EventType.HandleTower):
                     handler.HandleTowerInfo4(sender, e);
                     break;
-                case (AdventurePhrase.ENTER_TOWER, (int)EventType.HandleTower):
+                case (AdventurePhrase.COME_TOWER, (int)EventType.HandleTower):
+                    playerRepository.SetEvent(player.UserId, EventType.HandleCloseTower);
+                    handler.HandleCloseTower4(player.MaxStage, sender, e);
+                    break;
+                case (AdventurePhrase.ENTER_TOWER, (int)EventType.HandleCloseTower):
                     playerRepository.SetEvent(player.UserId, EventType.HandleEnterTower);
-                    handler.HandleEnterTower4(sender, e);
+                    handler.HandleEnterTower5(sender, e);
+                    break;
+                case (AdventurePhrase.ENTER_STAGE_TOWER11 or AdventurePhrase.ENTER_STAGE_TOWER21 or AdventurePhrase.ENTER_STAGE_TOWER31 or AdventurePhrase.ENTER_STAGE_TOWER41 or AdventurePhrase.ENTER_STAGE_TOWER51 or AdventurePhrase.ENTER_STAGE_TOWER61 or AdventurePhrase.ENTER_STAGE_TOWER71 or AdventurePhrase.ENTER_STAGE_TOWER81 or AdventurePhrase.ENTER_STAGE_TOWER91
+                , (int)EventType.HandleCloseTower):
+                    playerRepository.SetEvent(player.UserId, EventType.HandleEnterTower);
+                    handler.HandleEnterStageTower5(sender, e);
                     break;
 
                 default:

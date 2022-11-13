@@ -3,21 +3,36 @@ using FrogAnanas.Context;
 using FrogAnanas.Handlers.JuniorLevelHandlers;
 using FrogAnanas.Handlers.MiddleLevelHandlers;
 using FrogAnanas.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using System.Configuration;
 
-var app = BuildConfig();
-app.Start();
+IConfiguration config = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .AddEnvironmentVariables()
+    .Build();
 
-static AppStart BuildConfig()
+var app = Build(config);
+app.Start(config);
+
+static AppStart Build(IConfiguration config)
 {
+
     Log.Logger = new LoggerConfiguration()
-        .MinimumLevel.Debug()
+        .ReadFrom.Configuration(config)
+        .Enrich.FromLogContext()
         .WriteTo.Console()
         .CreateLogger();
 
     var services = new ServiceCollection()
-    .AddDbContextFactory<ApplicationContext>(lifetime: ServiceLifetime.Singleton);
+    .AddDbContextFactory<ApplicationContext>(options =>
+    {
+        options.UseSqlServer(config.GetConnectionString("DefaultContext"));
+        options.EnableSensitiveDataLogging();
+    }
+    ,lifetime: ServiceLifetime.Singleton);
 
     services.AddTransient<IPlayerRepository, PlayerRepository>();
     services.AddTransient<IMasteryRepository, MasteryRepository>();

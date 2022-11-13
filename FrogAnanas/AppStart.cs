@@ -15,6 +15,7 @@ using FrogAnanas.Context;
 using FrogAnanas.Handlers.MiddleLevelHandlers;
 using FrogAnanas.Models;
 using FrogAnanas.Repositories;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Serilog;
 
@@ -22,8 +23,8 @@ namespace FrogAnanas
 {
     public class AppStart
     {
-        static AppSettingsSection config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).AppSettings;
-        public static readonly VkBot bot = new VkBot(config.Settings["groupToken"].Value, config.Settings["groupUri"].Value);
+
+        public static VkBot bot;
 
         private readonly RegistrationHandler registrationHandler;
         private readonly PlayerInfoHandler playerInfoHandler;
@@ -36,12 +37,12 @@ namespace FrogAnanas
             this.adventureHandler = adventureHandler;
             this.playerRepository = playerRepository;
         }
-        public async void Start()
+        public async void Start(IConfiguration config)
         {
-            bot.OnMessageReceived += HandleMessage;
+            bot = new VkBot(config.GetSection("VkBot:Token").Value, config.GetSection("VkBot:GroupUri").Value);
 
+            bot.OnMessageReceived += HandleMessage;
             Log.Information("StartReveiving");
-            Console.WriteLine("SstartReceiveng");
             bot.Start(); 
             
             Console.ReadLine();
