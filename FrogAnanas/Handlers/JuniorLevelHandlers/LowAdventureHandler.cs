@@ -6,10 +6,11 @@ namespace FrogAnanas.Handlers.JuniorLevelHandlers
 {
     public class LowAdventureHandler
     {
-        private readonly IPlayerRepository userRepository;
-        public LowAdventureHandler(IPlayerRepository repository)
+        private readonly IPlayerRepository playerRepository;
+        private readonly IStageRepository stageRepository;
+        public LowAdventureHandler(IPlayerRepository repository, IStageRepository stageRepository)
         {
-            this.userRepository = repository;
+            this.playerRepository = repository;
         }
         public async void HandleStartAdventure1(object? sender, MessageReceivedEventArgs e)
         {
@@ -60,7 +61,7 @@ namespace FrogAnanas.Handlers.JuniorLevelHandlers
                 Message = Message.TOWER,
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
-                Keyboard = KeyboardHelper.CreateOneColumns(KeyboardButtonColor.Default, AdventurePhrase.ENTER_TOWER, AdventurePhrase.TOWER_INFO, AdventurePhrase.GO_BACK_TOWN)
+                Keyboard = KeyboardHelper.CreateOneColumns(KeyboardButtonColor.Default, AdventurePhrase.COME_TOWER, AdventurePhrase.TOWER_INFO, AdventurePhrase.GO_BACK_TOWN)
             });
         }
         public async void HandleGoBackTown4(object? sender, MessageReceivedEventArgs e)
@@ -80,17 +81,49 @@ namespace FrogAnanas.Handlers.JuniorLevelHandlers
                 Message = "Здесь будет инфа по пройденным этажам",
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
-                Keyboard = KeyboardHelper.CreateOneColumns(KeyboardButtonColor.Default, AdventurePhrase.ENTER_TOWER, AdventurePhrase.TOWER_INFO, AdventurePhrase.GO_BACK_TOWN)
+                Keyboard = KeyboardHelper.CreateOneColumns(KeyboardButtonColor.Default, AdventurePhrase.COME_TOWER, AdventurePhrase.TOWER_INFO, AdventurePhrase.GO_BACK_TOWN)
             });
         }
-        public async void HandleEnterTower4(object? sender, MessageReceivedEventArgs e)
+        public async void HandleCloseTower4(int playerStage, object? sender, MessageReceivedEventArgs e)
         {
+            var keyboard = new KeyboardBuilder();
+            keyboard.AddButton("Войти в башню", "", KeyboardButtonColor.Primary);
+            //11,21,31
+            while (playerStage % 10 != 1)
+                playerStage--;
+
+            for (int i = playerStage; i > 10; i -= 10)
+            {
+                keyboard.AddLine().AddButton($"Войти на {i} этаж", "", i < 50 ? KeyboardButtonColor.Positive : KeyboardButtonColor.Negative);
+            }
+
+            AppStart.bot.Api.Messages.Send(new MessagesSendParams
+            {
+                Message = "Какое-то сообщение",
+                PeerId = e.Message.PeerId,
+                RandomId = Math.Abs(Environment.TickCount),
+                Keyboard = keyboard.Build()
+            });
+        }
+        public async void HandleEnterTower5(object? sender, MessageReceivedEventArgs e)
+        {
+
             AppStart.bot.Api.Messages.Send(new MessagesSendParams
             {
                 Message = Message.ENTER_TOWER,
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
-                Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Default, "В разработке")
+                Keyboard = KeyboardHelper.CreateOneColumns(KeyboardButtonColor.Default, "В разработке")
+            });
+        }
+        public async void HandleEnterStageTower5(object? sender, MessageReceivedEventArgs e)
+        {
+            AppStart.bot.Api.Messages.Send(new MessagesSendParams
+            {
+                Message = Message.ENTER_STAGE_TOWER,
+                PeerId = e.Message.PeerId,
+                RandomId = Math.Abs(Environment.TickCount),
+                Keyboard = KeyboardHelper.CreateOneColumns(KeyboardButtonColor.Default, "В разработке")
             });
         }
     }

@@ -41,8 +41,18 @@ namespace FrogAnanas.Constants
         public const string BAR = "Бар у тети Гали";
         public const string MARKET = "Барахолка \"У саныча\"";
         public const string TOWER_INFO = "Справочкник по башне";
-        public const string ENTER_TOWER = "Войти в башню";
+        public const string COME_TOWER = "Подойти к башне";
         public const string GO_BACK_TOWN = "Вернуться в город";
+        public const string ENTER_TOWER = "Войти в башню";
+        public const string ENTER_STAGE_TOWER11 = "Войти на 11 этаж";
+        public const string ENTER_STAGE_TOWER21 = "Войти на 21 этаж";
+        public const string ENTER_STAGE_TOWER31 = "Войти на 31 этаж";
+        public const string ENTER_STAGE_TOWER41 = "Войти на 41 этаж";
+        public const string ENTER_STAGE_TOWER51 = "Войти на 51 этаж";
+        public const string ENTER_STAGE_TOWER61 = "Войти на 61 этаж";
+        public const string ENTER_STAGE_TOWER71 = "Войти на 71 этаж";
+        public const string ENTER_STAGE_TOWER81 = "Войти на 81 этаж";
+        public const string ENTER_STAGE_TOWER91 = "Войти на 91 этаж";
     }
     public static class PhrasesType
     {

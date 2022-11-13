@@ -21,6 +21,7 @@ namespace FrogAnanas.Context
         public DbSet<Skill> Skills { get; set; }
         public DbSet<Level> Levels { get; set; }
         public DbSet<Stage> Stages { get; set; }
+        public DbSet<Enemy> Enemies { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
@@ -28,8 +29,6 @@ namespace FrogAnanas.Context
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=DESKTOP-ET4OTK6\SQLEXPRESS;Database=VkGamedb;Trusted_Connection=True;");
-            optionsBuilder.EnableSensitiveDataLogging();
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

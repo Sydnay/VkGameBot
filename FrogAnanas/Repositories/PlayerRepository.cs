@@ -106,7 +106,7 @@ namespace FrogAnanas.Repositories
 
             player.Gender = gender;
             player.Name = name;
-            player.DPS = 1;
+            player.DPS = 3;
             player.Defence = 3;
             player.Accuracy = 0.8;
             player.Evation = 0.2;
@@ -284,6 +284,22 @@ namespace FrogAnanas.Repositories
                 Id = 1,
                 Name = "Ветка дерева"
             });
+
+            await context.Enemies.AddAsync(new Enemy
+            {
+                Id = 1,
+                Name = "Хоб гоблин",
+                Accuracy = 0.8,
+                CritChance = 0.05,
+                MultipleCrit = 1.5,
+                Damage = 2,
+                Defence = 2,
+                Evation = 0.1,
+                HP = 20,
+                Description = "Уебано редкостный",
+                Initiative = 0.7
+            });
+
 
             try
             {

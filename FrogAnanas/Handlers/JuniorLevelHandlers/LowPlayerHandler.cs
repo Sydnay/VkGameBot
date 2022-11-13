@@ -72,7 +72,7 @@ namespace FrogAnanas.Handlers.JuniorLevelHandlers
             AppStart.bot.Api.Messages.Send(new MessagesSendParams
             {
                 Attachments = photo,
-                Message = $"Ресурсы:\n{msgResources}\nПредметы:{msgImages}",
+                Message = $"Ресурсы:\n{msgResources}\nПредметы:\n{msgImages}",
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
                 Keyboard = KeyboardHelper.CreateTwoColumns(KeyboardButtonColor.Default, PlayerInfoPhrase.player, AdventurePhrase.TOWER, AdventurePhrase.BAR, AdventurePhrase.MARKET)
