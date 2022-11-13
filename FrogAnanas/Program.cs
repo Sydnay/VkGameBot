@@ -4,19 +4,24 @@ using FrogAnanas.Handlers.JuniorLevelHandlers;
 using FrogAnanas.Handlers.MiddleLevelHandlers;
 using FrogAnanas.Repositories;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using MongoDB.Driver;
+using Serilog;
 
 var app = BuildConfig();
 app.Start();
 
 static AppStart BuildConfig()
 {
+    Log.Logger = new LoggerConfiguration()
+        .MinimumLevel.Debug()
+        .WriteTo.Console()
+        .CreateLogger();
+
     var services = new ServiceCollection()
-    .AddDbContextFactory<ApplicationContext>(lifetime:ServiceLifetime.Singleton);
+    .AddDbContextFactory<ApplicationContext>(lifetime: ServiceLifetime.Singleton);
 
     services.AddTransient<IPlayerRepository, PlayerRepository>();
     services.AddTransient<IMasteryRepository, MasteryRepository>();
+    services.AddTransient<IStageRepository, StageRepository>();
 
     services.AddTransient<LowPlayerHandler>();
     services.AddTransient<LowAdventureHandler>();

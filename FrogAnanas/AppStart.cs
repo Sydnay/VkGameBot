@@ -5,6 +5,7 @@ global using VkNet.Enums.SafetyEnums;
 global using VkNet.Model.Keyboard;
 global using VkNet.Model.RequestParams;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -14,14 +15,16 @@ using FrogAnanas.Context;
 using FrogAnanas.Handlers.MiddleLevelHandlers;
 using FrogAnanas.Models;
 using FrogAnanas.Repositories;
+using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace FrogAnanas
 {
     public class AppStart
     {
-        const string token = "vk1.a.7KyPdYKqp5ANTIBuBFlNKW3wXvLJFE3AsVoc8zm-mmU8KcInZ6-EgrhXxbdp17HSt6Q52gllyfFp2JynQ6ZGBWWYhDyfsE9S2ir9APQNNtL_dglHec77iUB2fSFBd7cRmRhpxeoVnQvTbdIa225E8PSPb6YNytUNiybnK9aIyjN6Q-oHT_F3bopuEOE6_81t5x82gbgr3tlkmYbkoPHvlA";
-        const string groupUri = "https://vk.com/club216986922";
-        public static readonly VkBot bot = new VkBot(token, groupUri);
+        static AppSettingsSection config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).AppSettings;
+        public static readonly VkBot bot = new VkBot(config.Settings["groupToken"].Value, config.Settings["groupUri"].Value);
+
         private readonly RegistrationHandler registrationHandler;
         private readonly PlayerInfoHandler playerInfoHandler;
         private readonly AdventureHandler adventureHandler;
@@ -37,6 +40,7 @@ namespace FrogAnanas
         {
             bot.OnMessageReceived += HandleMessage;
 
+            Log.Information("StartReveiving");
             Console.WriteLine("SstartReceiveng");
             bot.Start(); 
             
