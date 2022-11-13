@@ -25,19 +25,22 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
 
             switch (msg, player.UserEventId)
             {
-                case (ConstPhrase.player, not (int)EventType.HandlePlayer):
-                    playerRepository.SetCurrentEvent(player.UserId, EventType.HandlePlayer);
-                    handler.HandlePlayer4(sender, e);
+                case (PlayerInfoPhrase.player, not (int)EventType.HandlePlayer):
+                    playerRepository.SetEvent(player.UserId, EventType.HandlePlayer);
+                    handler.HandlePlayer4(player, sender, e);
                     break;
 
-                case (ConstPhrase.playerInfo, (int)EventType.HandlePlayer):
-                    playerRepository.SetCurrentEvent(player.UserId, EventType.HandlePlayerInfo);
-                    handler.HandlePlayerInfo5(player, sender, e);
+                case (PlayerInfoPhrase.playerInventory, (int)EventType.HandlePlayer):
+                    playerRepository.SetEvent(player.UserId, EventType.HandleCity);
+                    handler.HandlePlayerInventory2(player.UserId, sender, e);
                     break;
-
-                case (ConstPhrase.playerInventory, (int)EventType.HandlePlayer):
-                    playerRepository.SetCurrentEvent(player.UserId, EventType.HandlePlayerInventory);
-                    handler.HandlePlayerInventory6(sender, e);
+                case (PlayerInfoPhrase.playerSkills, (int)EventType.HandlePlayer):
+                    playerRepository.SetEvent(player.UserId, EventType.HandleCity);
+                    handler.HandlePlayerSkills2(player.UserId, sender, e);
+                    break;
+                case (PlayerInfoPhrase.playerEquip, (int)EventType.HandlePlayer):
+                    playerRepository.SetEvent(player.UserId, EventType.HandleCity);
+                    handler.HandlePlayerEquip2(sender, e);
                     break;
 
                 default:

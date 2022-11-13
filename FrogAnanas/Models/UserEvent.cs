@@ -21,8 +21,14 @@ namespace FrogAnanas.Models
         HandleCreation,
         HandleFirstRole,
         HandleAcceptFirstRole,
+
         HandlePlayer,
         HandlePlayerInfo,
         HandlePlayerInventory,
+
+        HandleStartAdventure,
+        HandleCity,
+        HandleTower,
+        HandleEnterTower,
     }
 }
