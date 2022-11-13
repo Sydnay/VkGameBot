@@ -22,8 +22,8 @@ namespace FrogAnanas.Models
 
         public int UserEventId { get; set; }
         public UserEvent UserEvent { get; set; }
-        public DateTime CreateTime { get; set; } = DateTime.Now;
-        public DateTime UpdateTime { get; set; } = DateTime.Now;
+        public DateTime CreateTime { get; set; } = DateTime.UtcNow;
+        public DateTime UpdateTime { get; set; } = DateTime.UtcNow;
     }
 
     public enum Gender

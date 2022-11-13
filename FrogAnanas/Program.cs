@@ -22,6 +22,7 @@ static AppStart BuildConfig()
     services.AddTransient<PlayerInfoHandler>();
 
     services.AddTransient<AppStart>();
+    services.AddLogging();
 
     var serviceProvider = services.BuildServiceProvider();
 
