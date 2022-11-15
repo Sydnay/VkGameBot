@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 
 namespace FrogAnanas.Constants
 {
@@ -54,6 +49,12 @@ namespace FrogAnanas.Constants
         public const string ENTER_STAGE_TOWER81 = "Войти на 81 этаж";
         public const string ENTER_STAGE_TOWER91 = "Войти на 91 этаж";
     }
+    public static class TowerPhrase
+    {
+        public const string GO_FORWARD = "Вперед";
+        public const string BATTLE = "В бой";
+        public const string ESCAPE = "Выйти наружу";
+    }
     public static class PhrasesType
     {
         static PhrasesType()
@@ -63,16 +64,20 @@ namespace FrogAnanas.Constants
         private static void SetLists()
         {
             foreach (FieldInfo field in typeof(RegistrationPhrase).GetFields())
-                registrationPhrases.Add(field.GetValue(field.Name) as string??String.Empty);
+                registrationPhrases.Add(field.GetValue(field.Name) as string ?? String.Empty);
 
             foreach (FieldInfo field in typeof(PlayerInfoPhrase).GetFields())
                 playerInfoPhrases.Add(field.GetValue(field.Name) as string ?? String.Empty);
 
             foreach (FieldInfo field in typeof(AdventurePhrase).GetFields())
                 adventurePhrases.Add(field.GetValue(field.Name) as string ?? String.Empty);
+
+            foreach (FieldInfo field in typeof(TowerPhrase).GetFields())
+                towerPhrases.Add(field.GetValue(field.Name) as string ?? String.Empty);
         }
         public static List<string> registrationPhrases = new List<string>();
         public static List<string> playerInfoPhrases = new List<string>();
         public static List<string> adventurePhrases = new List<string>();
+        public static List<string> towerPhrases = new List<string>();
     }
 }

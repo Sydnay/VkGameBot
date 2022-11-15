@@ -106,12 +106,13 @@ namespace FrogAnanas.Repositories
 
             player.Gender = gender;
             player.Name = name;
-            player.DPS = 3;
+            player.Damage = 3;
             player.Defence = 3;
             player.Accuracy = 0.8;
             player.Evation = 0.2;
             player.CritChance = 0.1;
             player.MultipleCrit = 1.1;
+            player.CurrentHP = 50;
             player.HP = 50;
             player.Initiative = 0.8;
             player.Perception = 2;
@@ -247,6 +248,7 @@ namespace FrogAnanas.Repositories
                 Name = "Удар копьем",
             });
 
+
             await context.Stages.AddAsync(new Stage
             {
                 Id = 1,
@@ -273,17 +275,34 @@ namespace FrogAnanas.Repositories
                 Description = "5 этаж"
             });
 
+
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
             await context.Items.AddAsync(new Item
             {
                 Id = 1,
                 Name = "Маленькая бутылка зелья исцеления"
             });
 
+
             await context.Resources.AddAsync(new Resource
             {
                 Id = 1,
                 Name = "Ветка дерева"
             });
+            await context.Resources.AddAsync(new Resource
+            {
+                Id = 2,
+                Name = "Клык гоблина"
+            });
+
 
             await context.Enemies.AddAsync(new Enemy
             {
@@ -296,8 +315,27 @@ namespace FrogAnanas.Repositories
                 Defence = 2,
                 Evation = 0.1,
                 HP = 20,
-                Description = "Уебано редкостный",
-                Initiative = 0.7
+                Description = "Уебан редкостный",
+                Initiative = 0.7,
+                GivenXP = 30,
+                Stages = context.Stages.Where(x=>x.Id <6).ToList(),
+            });
+
+
+            await context.ResourcesEnemies.AddAsync(new ResourcesEnemy
+            {
+                EnemyId = 1,
+                ResourceId = 2,
+                DropChance = 0.7,
+                MaxAmount = 3
+            });
+
+
+            await context.ItemsEnemies.AddAsync(new ItemsEnemy
+            {
+                EnemyId = 1,
+                ItemId = 1,
+                DropChance = 0.7
             });
 
 
@@ -311,5 +349,9 @@ namespace FrogAnanas.Repositories
             }
         }
 
+        public void ReduceHP(Player player, int amountHP)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

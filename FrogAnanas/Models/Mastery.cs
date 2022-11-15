@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FrogAnanas.Models
 {
-    public class Mastery
+    public record Mastery
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }

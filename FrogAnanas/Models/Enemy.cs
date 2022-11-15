@@ -21,7 +21,10 @@ namespace FrogAnanas.Models
         public int Defence { get; set; }
         public int HP { get; set; }
         public double Initiative { get; set; }
+        public int GivenXP { get; set; }
 
+        public List<ItemsEnemy> ItemsEnemies { get; set; }
+        public List<ResourcesEnemy> ResourcesEnemies { get; set; }
         public List<Stage> Stages { get; set; }
     }
 }

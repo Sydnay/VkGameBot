@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FrogAnanas.Models
 {
-    public class Level
+    public record Level
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]

@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 
 namespace FrogAnanas.Models
 {
-    public class Resource
+    public record Resource
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public string Name { get; set; }
+
+        public List<ResourcesEnemy> ResourcesEnemies { get; set; }
         public override string ToString()
         {
             return $"{Name}";

@@ -22,7 +22,7 @@ namespace FrogAnanas.Handlers.JuniorLevelHandlers
         {
             AppStart.bot.Api.Messages.Send(new MessagesSendParams
             {
-                Message = $"Здесь вы можете узнать основную информацию по вашему персонажу\nИмя: {player.Name}\n Атака:{player.DPS}\n Защита:{player.Defence}\n Здоровье: {player.HP}\n Наивысший этаж:{player.MaxStage}\n Sex:{player.Gender}",
+                Message = $"Здесь вы можете узнать основную информацию по вашему персонажу\nИмя: {player.Name}\n Атака:{player.Damage}\n Защита:{player.Defence}\n Здоровье: {player.HP}\n Наивысший этаж:{player.MaxStage}\n Sex:{player.Gender}",
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
                 Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Default, PlayerInfoPhrase.playerInventory, PlayerInfoPhrase.playerEquip, PlayerInfoPhrase.playerSkills)

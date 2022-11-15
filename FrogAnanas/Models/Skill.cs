@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FrogAnanas.Models
 {
-    public class Skill
+    public record Skill
     {
         public int Id { get; set; }
         public string Name { get; set; }

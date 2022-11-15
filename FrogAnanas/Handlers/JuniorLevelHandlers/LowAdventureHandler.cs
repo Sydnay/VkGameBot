@@ -113,7 +113,7 @@ namespace FrogAnanas.Handlers.JuniorLevelHandlers
                 Message = Message.ENTER_TOWER,
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
-                Keyboard = KeyboardHelper.CreateOneColumns(KeyboardButtonColor.Default, "В разработке")
+                Keyboard = KeyboardHelper.CreateOneColumns(KeyboardButtonColor.Default, TowerPhrase.GO_FORWARD)
             });
         }
         public async void HandleEnterStageTower5(object? sender, MessageReceivedEventArgs e)
@@ -123,7 +123,7 @@ namespace FrogAnanas.Handlers.JuniorLevelHandlers
                 Message = Message.ENTER_STAGE_TOWER,
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
-                Keyboard = KeyboardHelper.CreateOneColumns(KeyboardButtonColor.Default, "В разработке")
+                Keyboard = KeyboardHelper.CreateOneColumns(KeyboardButtonColor.Default, TowerPhrase.GO_FORWARD)
             });
         }
     }
