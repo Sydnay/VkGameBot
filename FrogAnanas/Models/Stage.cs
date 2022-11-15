@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FrogAnanas.Models
 {
-    public class Stage
+    public record Stage
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]

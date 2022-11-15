@@ -18,6 +18,7 @@ namespace FrogAnanas.Repositories
         void SetEvent(long userId, EventType currEvent);
         void SetDefaultStats(long userId, Gender gender, string name);
         void SetMastery(long userId, int masteryId);
+        void ReduceHP(Player player, int amountHP);
         Task ABOBA();
     }
 }

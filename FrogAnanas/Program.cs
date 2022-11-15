@@ -40,10 +40,12 @@ static AppStart Build(IConfiguration config)
 
     services.AddTransient<LowPlayerHandler>();
     services.AddTransient<LowAdventureHandler>();
+    services.AddTransient<LowTowerHandler>();
 
     services.AddTransient<RegistrationHandler>();
     services.AddTransient<PlayerInfoHandler>();
     services.AddTransient<AdventureHandler>();
+    services.AddTransient<TowerHandler>();
 
     services.AddTransient<AppStart>();
 

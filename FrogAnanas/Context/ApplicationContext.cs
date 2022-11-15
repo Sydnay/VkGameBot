@@ -16,6 +16,8 @@ namespace FrogAnanas.Context
         public DbSet<MasteryPlayer> MasteryPlayers { get; set; }
         public DbSet<ItemsPlayer> ItemsPlayers { get; set; }
         public DbSet<ResourcesPlayer> ResourcesPlayers { get; set; }
+        public DbSet<ItemsEnemy> ItemsEnemies { get; set; }
+        public DbSet<ResourcesEnemy> ResourcesEnemies { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<Resource> Resources { get; set; }
         public DbSet<Skill> Skills { get; set; }
@@ -64,6 +66,22 @@ namespace FrogAnanas.Context
             .HasOne(p => p.Player)
             .WithMany(mp => mp.ItemsPlayers)
             .HasForeignKey(p => p.UserId);
+
+            modelBuilder.Entity<ResourcesEnemy>()
+            .HasKey(sc => new { sc.EnemyId, sc.ResourceId });
+
+            modelBuilder.Entity<ResourcesEnemy>()
+            .HasOne(p => p.Enemy)
+            .WithMany(mp => mp.ResourcesEnemies)
+            .HasForeignKey(p => p.EnemyId);
+
+            modelBuilder.Entity<ItemsEnemy>()
+            .HasKey(sc => new { sc.EnemyId, sc.ItemId });
+
+            modelBuilder.Entity<ItemsEnemy>()
+            .HasOne(p => p.Enemy)
+            .WithMany(mp => mp.ItemsEnemies)
+            .HasForeignKey(p => p.EnemyId);
 
             modelBuilder.Entity<Player>()
             .HasOne(p => p.Stage)
