@@ -2,6 +2,7 @@
 using FrogAnanas.Helpers;
 using FrogAnanas.Models;
 using FrogAnanas.Repositories;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,8 +89,8 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
                 UserEventId = (int)EventType.HandleStart,
                 Name = "Заблудший путник",
                 MaxStage = 1
-                
             });
+            Log.Information($"Игрок {e.Message.FromId} зарегался");
 
             AppStart.bot.Api.Messages.Send(new MessagesSendParams
             {
@@ -98,12 +99,13 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
                 RandomId = Math.Abs(Environment.TickCount),
                 Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Positive, RegistrationPhrase.createHero)
             });
-
-            Console.WriteLine($"HandleStart");
+            Log.Information($"Отправили сообщение");
         }
 
         async void HandleGender2(object? sender, MessageReceivedEventArgs e)
         {
+            Log.Information($"Игрок {e.Message.FromId} начал создание персонажа");
+
             AppStart.bot.Api.Messages.Send(new MessagesSendParams
             {
                 Message = "Выберите пол",
@@ -112,7 +114,7 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
                 Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Positive, RegistrationPhrase.male, RegistrationPhrase.female)
             });
 
-            Console.WriteLine($"HandleGender");
+            Log.Information($"Отправили сообщение");
         }
 
         async void HandleCreation3(long userId, object? sender, MessageReceivedEventArgs e)
@@ -120,6 +122,7 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
             playerRepository.SetDefaultStats(userId, e.Message.Text == RegistrationPhrase.female ? Gender.Female : Gender.Male,
                 (await AppStart.bot.Api.Users.GetAsync(new List<long> { e.Message.FromId ?? -1 })).FirstOrDefault()!.FirstName);
 
+            Log.Information($"Игрок {e.Message.FromId} выбрал пол");
             AppStart.bot.Api.Messages.Send(new MessagesSendParams
             {
                 Message = $"Персоонаж успешно создан! \nДавайте выберем первую роль",
@@ -128,7 +131,7 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
                 Keyboard = KeyboardHelper.CreateOneColumns(KeyboardButtonColor.Positive, RegistrationPhrase.masterySword, RegistrationPhrase.masteryDoubleSword, RegistrationPhrase.masteryAxe, RegistrationPhrase.masteryDagger )
             });
 
-            Console.WriteLine($"HandleCreation");
+            Log.Information($"Отправили сообщение ");
         }
 
         async void HandleFirstRole4(long userId, object? sender, MessageReceivedEventArgs e)
@@ -136,6 +139,7 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
             var mastery = masteryRepository.GetMastery(e.Message.Text);
             playerRepository.SetMastery(userId, mastery.Id);
 
+            Log.Information($"Игрок {e.Message.FromId} выбрал роль");
             AppStart.bot.Api.Messages.Send(new MessagesSendParams
             {
                 Message = $"{e.Message.Text}: {mastery.Description}",
@@ -144,10 +148,11 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
                 Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Default, RegistrationPhrase.accept, RegistrationPhrase.goBack)
             });
 
-            Console.WriteLine($"HandleCreation");
+            Log.Information($"Отправили сообщение ");
         }
         async void HandleAcceptFristRole5(long userId, object? sender, MessageReceivedEventArgs e)
         {
+            Log.Information($"Игрок {e.Message.FromId} подтвердил выбранную роль"); 
             AppStart.bot.Api.Messages.Send(new MessagesSendParams
             {
                 Message = $"Персоонаж успешно создан!",
@@ -156,10 +161,11 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
                 Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Positive, AdventurePhrase.START_ADVENTURE)
             });
 
-            Console.WriteLine($"HandleCreation");
+            Log.Information($"Отправили сообщение ");
         }
         async void HandleGoBackFristRole5(object? sender, MessageReceivedEventArgs e)
         {
+            Log.Information($"Игрок {e.Message.FromId} отменил выбранную роль");
             AppStart.bot.Api.Messages.Send(new MessagesSendParams
             {
                 Message = $"(сменить мастерство можно будет чуть позже в любое время)",
@@ -168,7 +174,7 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
                 Keyboard = KeyboardHelper.CreateOneColumns(KeyboardButtonColor.Positive, RegistrationPhrase.masterySword, RegistrationPhrase.masteryDoubleSword, RegistrationPhrase.masteryAxe, RegistrationPhrase.masteryDagger)
             });
 
-            Console.WriteLine($"HandleCreation");
+            Log.Information($"Отправили сообщение ");
         }
     }
 }
