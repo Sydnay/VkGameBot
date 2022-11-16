@@ -1,4 +1,5 @@
-﻿using FrogAnanas.Models;
+﻿using FrogAnanas.DTOs;
+using FrogAnanas.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,9 @@ namespace FrogAnanas.Repositories
         void SetEvent(long userId, EventType currEvent);
         void SetDefaultStats(long userId, Gender gender, string name);
         void SetMastery(long userId, int masteryId);
-        void ReduceHP(Player player, int amountHP);
+        void ReduceHP(long userId, int amountHP);
+        void InreaseXP(long userId, int amountXP);
+        CurrentMasteryLevelDto GetCurrentMasteryLevel(long userId);
         Task ABOBA();
     }
 }

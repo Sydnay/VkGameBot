@@ -23,7 +23,7 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
         {
             var msg = e.Message.Text;
 
-
+            //TODO: Не реализованы этапы прохода по этажу
             switch (msg, player.UserEventId)
             {
                 case (TowerPhrase.GO_FORWARD, (int)EventType.HandleEnterTower):
@@ -52,8 +52,7 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
                     break;
 
                 case (TowerPhrase.BATTLE, (int)EventType.HandleBattle):
-                    playerRepository.SetEvent(player.UserId, EventType.HandleForward);
-                    handler.HandleBattle1(sender, e);
+                    handler.HandleBattle1(player, sender, e);
                     break;
                 case (TowerPhrase.BATTLE, (int)EventType.HandleHardBattle):
                     playerRepository.SetEvent(player.UserId, EventType.HandleForward);

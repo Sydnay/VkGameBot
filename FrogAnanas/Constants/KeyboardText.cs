@@ -55,6 +55,10 @@ namespace FrogAnanas.Constants
         public const string BATTLE = "В бой";
         public const string ESCAPE = "Выйти наружу";
     }
+    public static class FightPhrase
+    {
+        public const string ATTACK = "Атаковать";
+    }
     public static class PhrasesType
     {
         static PhrasesType()
@@ -74,10 +78,14 @@ namespace FrogAnanas.Constants
 
             foreach (FieldInfo field in typeof(TowerPhrase).GetFields())
                 towerPhrases.Add(field.GetValue(field.Name) as string ?? String.Empty);
+
+            foreach (FieldInfo field in typeof(FightPhrase).GetFields())
+                fightingPhrases.Add(field.GetValue(field.Name) as string ?? String.Empty);
         }
         public static List<string> registrationPhrases = new List<string>();
         public static List<string> playerInfoPhrases = new List<string>();
         public static List<string> adventurePhrases = new List<string>();
         public static List<string> towerPhrases = new List<string>();
+        public static List<string> fightingPhrases = new List<string>();
     }
 }

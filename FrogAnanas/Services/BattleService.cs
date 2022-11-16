@@ -1,10 +1,5 @@
-﻿using FrogAnanas.Models;
+﻿using FrogAnanas.Context;
 using FrogAnanas.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FrogAnanas.Services
 {
@@ -13,13 +8,18 @@ namespace FrogAnanas.Services
         private Random random = new Random();
         private readonly IEnemyRepository enemyRepository;
         private readonly IPlayerRepository playerRepository;
-        public BattleService(IEnemyRepository enemyRepository, IPlayerRepository playerRepository)
+        private readonly MongoDbRepository eventRepository;
+        public BattleService(IEnemyRepository enemyRepository, IPlayerRepository playerRepository, MongoDbRepository eventRepository)
         {
             this.enemyRepository = enemyRepository;
             this.playerRepository = playerRepository;
+            this.eventRepository = eventRepository;
         }
-        public string Attack(Player player, Enemy enemy)
+        public string Attack(long userId)
         {
+            var player = eventRepository.GetPlayer(userId);
+            var enemy = eventRepository.GetEnemy(userId);
+
             string msg;
             string damagePlayer;
             string damageEnemy;
@@ -29,37 +29,45 @@ namespace FrogAnanas.Services
             else
             {
                 int dmg = player.Damage - enemy.Defence;
+                enemy.HP -= dmg;
                 damagePlayer = $"⚔Вы нанесли {dmg} урона\n";
-                enemyRepository.ReduceHP(enemy, dmg);
+            }
+            if (enemy.HP <= 0)
+            {
+                playerRepository.InreaseXP(userId, enemy.GivenXP);
+                var level = playerRepository.GetCurrentMasteryLevel(userId);
+                return damagePlayer + $"\n\n VICTORY\nПолучено опыта:{enemy.GivenXP}\nТекущий прогресс: {level.Level} уровень\n{level.CurrentXP}/{level.RequiredXP}";
             }
 
-            if (IsDodge(player.Accuracy, enemy.Evation))
+            if (IsDodge(enemy.Accuracy, player.Evation))
                 damageEnemy = "Вы уклонились от атаки противника\n";
             else
             {
-                int dmg = player.Damage - enemy.Defence;
-                playerRepository.ReduceHP(player, dmg);
+                int dmg = enemy.Damage - player.Defence;
+                playerRepository.ReduceHP(userId, dmg);
                 damageEnemy = $"⚔Противник нанес {dmg} урона\n";
             }
             msg = damagePlayer + damageEnemy + "\n\n" + $"Ваше здоровье:{player.CurrentHP}/{player.HP} \nЗдоровье {enemy.Name}: {enemy.HP}";
             return msg;
         }
 
-        public Enemy SpawnRandomEnemy(int stage)
-        {
-            var enemies = enemyRepository.GetEnemiesByStages(stage);
-            return enemies[random.Next(enemies.Count)];
-        }
         private bool IsDodge(double accuracy, double evation)
         {
             var chance = accuracy - evation;
-            double randomNum = random.Next(100)/100;
-            return chance>randomNum?true:false;
+            double randomNum = random.Next(100) / 100d;
+            return chance > randomNum ? false : true;
         }
 
-        void IBattleService.Attack(Player player, Enemy enemy)
+        public bool isEnemyDead(long userId)
         {
-            throw new NotImplementedException();
+            var enemy = eventRepository.GetEnemy(userId);
+            return enemy.HP <= 0 ? true : false;
+        }
+
+        public bool isPlayerDead(long userId)
+        {
+            var player = eventRepository.GetPlayer(userId);
+            return player.HP <= 0 ? true : false;
         }
     }
 }
