@@ -1,6 +1,8 @@
 ﻿using FrogAnanas.Constants;
 using FrogAnanas.Context;
+using FrogAnanas.DTOs;
 using FrogAnanas.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace FrogAnanas.Repositories
 {
@@ -106,7 +108,7 @@ namespace FrogAnanas.Repositories
 
             player.Gender = gender;
             player.Name = name;
-            player.Damage = 3;
+            player.Damage = 8;
             player.Defence = 3;
             player.Accuracy = 0.8;
             player.Evation = 0.2;
@@ -128,12 +130,34 @@ namespace FrogAnanas.Repositories
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
 
-
+        public void ReduceHP(long userId, int amountHP)
+        {
+            var player = GetPlayer(userId);
+            player.CurrentHP -= amountHP;
+            context.SaveChanges();
+        }
+        public void InreaseXP(long userId, int amountXP)
+        {
+            var player = GetPlayer(userId);
+            var mastery = context.MasteryPlayers.FirstOrDefault(x => x.UserId == userId && x.MasteryId == player.MasteryId);
+            mastery!.CurrentXP += amountXP;
+            context.SaveChanges();
+        }
+        public CurrentMasteryLevelDto GetCurrentMasteryLevel(long userId)
+        {
+            var player = GetPlayer(userId);
+            var level = context.MasteryPlayers.Include(x=>x.CurrentLevelCLASS).FirstOrDefault(x => x.UserId == userId && x.MasteryId == player.MasteryId);
+            return new CurrentMasteryLevelDto
+            {
+                Level = level.CurrentLvl,
+                CurrentXP = level.CurrentXP,
+                RequiredXP = level.CurrentLevelCLASS.RequrimentXP
+            };
+        }
 
         public async Task ABOBA()
         {
@@ -182,32 +206,32 @@ namespace FrogAnanas.Repositories
             await context.Levels.AddAsync(new Level
             {
                 Lvl = 1,
-                RequrimentXP = 0
+                RequrimentXP = 150
             });
             await context.Levels.AddAsync(new Level
             {
                 Lvl = 2,
-                RequrimentXP = 100
-            });
-            await context.Levels.AddAsync(new Level
-            {
-                Lvl = 3,
                 RequrimentXP = 500
             });
             await context.Levels.AddAsync(new Level
             {
-                Lvl = 4,
+                Lvl = 3,
                 RequrimentXP = 1000
             });
             await context.Levels.AddAsync(new Level
             {
-                Lvl = 5,
+                Lvl = 4,
                 RequrimentXP = 1800
             });
             await context.Levels.AddAsync(new Level
             {
-                Lvl = 6,
+                Lvl = 5,
                 RequrimentXP = 3000
+            });
+            await context.Levels.AddAsync(new Level
+            {
+                Lvl = 6,
+                RequrimentXP = 5000
             });
 
 
@@ -349,9 +373,5 @@ namespace FrogAnanas.Repositories
             }
         }
 
-        public void ReduceHP(Player player, int amountHP)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

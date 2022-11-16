@@ -58,5 +58,6 @@ namespace FrogAnanas.Models
         HandleHardBattle,
         HandleBoss,
         HandleEscape,
+        HandleEndBattle,
     }
 }

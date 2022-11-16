@@ -35,7 +35,7 @@ namespace FrogAnanas.Handlers.JuniorLevelHandlers
                 Message = Message.GREHOVKA,
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
-                Keyboard = KeyboardHelper.CreateOneColumns(KeyboardButtonColor.Default, PlayerInfoPhrase.player, AdventurePhrase.TOWER, AdventurePhrase.BAR, AdventurePhrase.MARKET)
+                Keyboard = KeyboardHelper.CreateTwoColumns(KeyboardButtonColor.Default, PlayerInfoPhrase.player, AdventurePhrase.TOWER, AdventurePhrase.BAR, AdventurePhrase.MARKET)
             });
             Log.Information($"Отправили сообщение ");
         }

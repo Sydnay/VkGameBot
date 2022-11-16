@@ -9,7 +9,8 @@ namespace FrogAnanas.Services
 {
     public interface IBattleService
     {
-        void Attack(Player player, Enemy enemy);
-        Enemy SpawnRandomEnemy(int stage);
+        string Attack(long userId);
+        bool isEnemyDead(long userId);
+        bool isPlayerDead(long userId);
     }
 }

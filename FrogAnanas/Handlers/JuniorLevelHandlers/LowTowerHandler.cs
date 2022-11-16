@@ -1,5 +1,7 @@
 ﻿using FrogAnanas.Constants;
+using FrogAnanas.Context;
 using FrogAnanas.Helpers;
+using FrogAnanas.Models;
 using FrogAnanas.Repositories;
 using System;
 using System.Collections.Generic;
@@ -11,11 +13,12 @@ namespace FrogAnanas.Handlers.JuniorLevelHandlers
 {
     public class LowTowerHandler
     {
-        private readonly IPlayerRepository playerRepository;
-        private readonly IStageRepository stageRepository;
-        public LowTowerHandler(IPlayerRepository repository, IStageRepository stageRepository)
+        private readonly IEnemyRepository enemyRepository;
+        private readonly MongoDbRepository eventRepository;
+        public LowTowerHandler(IEnemyRepository repository, MongoDbRepository stageRepository)
         {
-            this.playerRepository = repository;
+            this.enemyRepository = repository;
+            this.eventRepository = stageRepository;
         }
         public async void HandleForward1(object? sender, MessageReceivedEventArgs e)
         {
@@ -67,14 +70,17 @@ namespace FrogAnanas.Handlers.JuniorLevelHandlers
                 Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Default, TowerPhrase.ESCAPE)
             });
         }
-        public async void HandleBattle1(object? sender, MessageReceivedEventArgs e)
+        public async void HandleBattle1(Player player, object? sender, MessageReceivedEventArgs e)
         {
+            //TODO: Не реализован текущий этаж
+            eventRepository.AddEvent(player, enemyRepository.SpawnRandomEnemy(1));
+
             AppStart.bot.Api.Messages.Send(new MessagesSendParams
             {
-                Message = "Типа тут драка какая-то прошла",
+                Message = "Начинается жеская заруба",
                 PeerId = e.Message.PeerId,
                 RandomId = Math.Abs(Environment.TickCount),
-                Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Default, TowerPhrase.GO_FORWARD)
+                Keyboard = KeyboardHelper.CreateBuilder(KeyboardButtonColor.Negative, FightPhrase.ATTACK)
             });
         }
         public async void HandleHardBattle1(object? sender, MessageReceivedEventArgs e)

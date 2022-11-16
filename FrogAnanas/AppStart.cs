@@ -30,14 +30,21 @@ namespace FrogAnanas
         private readonly PlayerInfoHandler playerInfoHandler;
         private readonly AdventureHandler adventureHandler;
         private readonly TowerHandler towerHandler;
+        private readonly FightingHandler fightingHandler;
         private readonly IPlayerRepository playerRepository;
-        public AppStart(IPlayerRepository playerRepository, RegistrationHandler registrationHandler, PlayerInfoHandler playerInfoHandler, AdventureHandler adventureHandler, TowerHandler towerHandler)
+        public AppStart(IPlayerRepository playerRepository, 
+            RegistrationHandler registrationHandler, 
+            PlayerInfoHandler playerInfoHandler, 
+            AdventureHandler adventureHandler, 
+            TowerHandler towerHandler,
+            FightingHandler fightingHandler)
         {
             this.registrationHandler = registrationHandler;
             this.playerInfoHandler = playerInfoHandler;
             this.adventureHandler = adventureHandler;
             this.playerRepository = playerRepository;
             this.towerHandler = towerHandler;
+            this.fightingHandler = fightingHandler;
         }
         public async void Start(IConfiguration config)
         {
@@ -71,6 +78,8 @@ namespace FrogAnanas
                 adventureHandler.HandleAdventure(player, sender, e);
             if (PhrasesType.towerPhrases.Contains(msg))
                 towerHandler.HandleTower(player, sender, e);
+            if (PhrasesType.fightingPhrases.Contains(msg))
+                fightingHandler.HandleFighting(player, sender, e);
         }
     }
 }

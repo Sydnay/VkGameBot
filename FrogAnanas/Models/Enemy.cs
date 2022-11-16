@@ -26,5 +26,23 @@ namespace FrogAnanas.Models
         public List<ItemsEnemy> ItemsEnemies { get; set; }
         public List<ResourcesEnemy> ResourcesEnemies { get; set; }
         public List<Stage> Stages { get; set; }
+        public static Enemy Clone(Enemy enemy) => new Enemy
+        {
+            Accuracy = enemy.Accuracy,
+            CritChance = enemy.CritChance,
+            Stages = enemy.Stages,
+            Damage = enemy.Damage,
+            Defence = enemy.Defence,
+            Description = enemy.Description,
+            Evation = enemy.Evation,
+            GivenXP = enemy.GivenXP,
+            HP = enemy.HP,
+            Id = enemy.Id,
+            Initiative = enemy.Initiative,
+            ItemsEnemies = enemy.ItemsEnemies,
+            MultipleCrit = enemy.MultipleCrit,
+            Name = enemy.Name,
+            ResourcesEnemies = enemy.ResourcesEnemies
+        };
     }
 }

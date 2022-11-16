@@ -3,6 +3,7 @@ using FrogAnanas.Context;
 using FrogAnanas.Handlers.JuniorLevelHandlers;
 using FrogAnanas.Handlers.MiddleLevelHandlers;
 using FrogAnanas.Repositories;
+using FrogAnanas.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,15 +38,20 @@ static AppStart Build(IConfiguration config)
     services.AddTransient<IPlayerRepository, PlayerRepository>();
     services.AddTransient<IMasteryRepository, MasteryRepository>();
     services.AddTransient<IStageRepository, StageRepository>();
+    services.AddTransient<IEnemyRepository, EnemyRepository>();
+    services.AddTransient<IBattleService, BattleService>();
+    services.AddSingleton<MongoDbRepository>();
 
     services.AddTransient<LowPlayerHandler>();
     services.AddTransient<LowAdventureHandler>();
     services.AddTransient<LowTowerHandler>();
+    services.AddTransient<LowFightingHandler>();
 
     services.AddTransient<RegistrationHandler>();
     services.AddTransient<PlayerInfoHandler>();
     services.AddTransient<AdventureHandler>();
     services.AddTransient<TowerHandler>();
+    services.AddTransient<FightingHandler>();
 
     services.AddTransient<AppStart>();
 

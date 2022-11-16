@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FrogAnanas.Repositories
+namespace FrogAnanas.Events
 {
-    public interface IEnemyRepository
+    public class FightEnemy
     {
-        Enemy SpawnRandomEnemy(int stage);
+        public Player Player { get; set; }
+        public Enemy Enemy { get; set; }
     }
 }
