@@ -8,6 +8,7 @@ namespace FrogAnanas.Models
 {
     public class ResourcesPlayer
     {
+        public int Id { get; set; }
         public int ResourceId { get; set; }
         public Resource Resource { get; set; }
         public long UserId { get; set; }

@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace FrogAnanas.Repositories
 {
-    public interface IMasteryRepository
+    public interface IItemRepository
     {
-        Mastery GetMasteryByName(string name);
-        Mastery GetMastery(int id);
-
+        Item GetItem(int id);
     }
 }

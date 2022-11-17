@@ -14,6 +14,7 @@ namespace FrogAnanas.Models
         public string Name { get; set; }
 
         public List<ResourcesEnemy> ResourcesEnemies { get; set; }
+        public List<ResourcesPlayer> ResourcesPlayers { get; set; }
         public override string ToString()
         {
             return $"{Name}";

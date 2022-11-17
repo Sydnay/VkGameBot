@@ -136,7 +136,7 @@ namespace FrogAnanas.Handlers.MiddleLevelHandlers
 
         async void HandleFirstRole4(long userId, object? sender, MessageReceivedEventArgs e)
         {
-            var mastery = masteryRepository.GetMastery(e.Message.Text);
+            var mastery = masteryRepository.GetMasteryByName(e.Message.Text);
             playerRepository.SetMastery(userId, mastery.Id);
 
             Log.Information($"Игрок {e.Message.FromId} выбрал роль");

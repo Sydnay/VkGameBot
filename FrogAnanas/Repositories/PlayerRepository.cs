@@ -1,6 +1,7 @@
 ﻿using FrogAnanas.Constants;
 using FrogAnanas.Context;
 using FrogAnanas.DTOs;
+using FrogAnanas.Events;
 using FrogAnanas.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,17 +21,33 @@ namespace FrogAnanas.Repositories
             lock (locker)
                 return context.Players.FirstOrDefault(x => x.UserId == userId);
         }
-        public List<Resource> GetPlayerResources(long userId)
+        public List<DropInfoDto> GetPlayerResources(long userId)
         {
-            var resourcesPlayerId = context.ResourcesPlayers.Where(x => x.UserId == userId).Select(x => x.ResourceId).ToList();
-            var resources = context.Resources.Where(x => resourcesPlayerId.Contains(x.Id)).ToList();
-            return resources;
+            var resourcesPlayer = context.ResourcesPlayers.Where(x => x.UserId == userId).ToList();
+            var resources = context.Resources.Where(x => resourcesPlayer.Select(x => x.ResourceId).Contains(x.Id)).ToList();
+            var info = new List<DropInfoDto>();
+            foreach (var res in resourcesPlayer)
+            {
+                var resource = resources.FirstOrDefault(x => x.Id == res.ResourceId);
+                info.Add(new DropInfoDto
+                {
+                    Amount = res.Amount,
+                    Name = resource.Name,
+                });
+            }
+            return info;
         }
         public List<Item> GetPlayerItems(long userId)
         {
-            var itemsPlayerId = context.ItemsPlayers.Where(x => x.UserId == userId).Select(x => x.ItemId).ToList();
-            var items = context.Items.Where(x => itemsPlayerId.Contains(x.Id)).ToList();
-            return items;
+            var itemsPlayer = context.ItemsPlayers.Where(x => x.UserId == userId).ToList();
+            var items = context.Items.Where(x => itemsPlayer.Select(x => x.ItemId).Contains(x.Id)).ToList();
+            var info = new List<Item>();
+            foreach (var itm in itemsPlayer)
+            {
+                var item = items.FirstOrDefault(x => x.Id == itm.ItemId);
+                info.Add(item);
+            }
+            return info;
         }
         public List<Skill> GetPlayerSkills(long userId)
         {
@@ -65,30 +82,6 @@ namespace FrogAnanas.Repositories
                 throw ex;
             }
         }
-        private void HandleAddPlayer(long userId)
-        {
-            var masteries = context.Masteries.ToList();
-            foreach (var mastery in masteries)
-            {
-                context.MasteryPlayers.Add(new MasteryPlayer
-                {
-                    MasteryId = mastery.Id,
-                    UserId = userId,
-                });
-            }
-            context.ItemsPlayers.Add(new ItemsPlayer
-            {
-                ItemId = 1,
-                UserId = userId,
-            });
-            context.ResourcesPlayers.Add(new ResourcesPlayer
-            {
-                ResourceId = 1,
-                UserId = userId,
-            });
-
-        }
-
         public void SetEvent(long userId, EventType currEvent)
         {
             var player = GetPlayer(userId);
@@ -108,16 +101,6 @@ namespace FrogAnanas.Repositories
 
             player.Gender = gender;
             player.Name = name;
-            player.Damage = 8;
-            player.Defence = 3;
-            player.Accuracy = 0.8;
-            player.Evation = 0.2;
-            player.CritChance = 0.1;
-            player.MultipleCrit = 1.1;
-            player.CurrentHP = 50;
-            player.HP = 50;
-            player.Initiative = 0.8;
-            player.Perception = 2;
             context.SaveChanges();
         }
         public void SetMastery(long userId, int masteryId)
@@ -140,12 +123,21 @@ namespace FrogAnanas.Repositories
             player.CurrentHP -= amountHP;
             context.SaveChanges();
         }
-        public void InreaseXP(long userId, int amountXP)
+        public bool InreaseXP(long userId, int amountXP)
         {
+            bool isLvlUp = false;
             var player = GetPlayer(userId);
-            var mastery = context.MasteryPlayers.FirstOrDefault(x => x.UserId == userId && x.MasteryId == player.MasteryId);
+            var mastery = context.MasteryPlayers.Include(x=>x.CurrentLevelCLASS).FirstOrDefault(x => x.UserId == userId && x.MasteryId == player.MasteryId);
             mastery!.CurrentXP += amountXP;
+
+            if (mastery.CurrentXP >= mastery.CurrentLevelCLASS.RequrimentXP)
+            {
+                IncreaseLvl(player, mastery);
+                isLvlUp = true;
+            }
+
             context.SaveChanges();
+            return isLvlUp;
         }
         public CurrentMasteryLevelDto GetCurrentMasteryLevel(long userId)
         {
@@ -157,6 +149,67 @@ namespace FrogAnanas.Repositories
                 CurrentXP = level.CurrentXP,
                 RequiredXP = level.CurrentLevelCLASS.RequrimentXP
             };
+        }
+        public void AddResource(long userId, ResourcesPlayer resource)
+        {
+            if (resource.Amount < 1 || GetFreeSlots(userId)<1)
+                return;
+
+            var resourceInInventory = context.ResourcesPlayers.FirstOrDefault(x => x.UserId == userId && x.ResourceId == resource.ResourceId);
+
+            if(resourceInInventory is not null)
+                resourceInInventory.Amount+=resource.Amount;
+            else
+                context.ResourcesPlayers.Add(resource);
+
+            context.SaveChanges();
+        }
+        public void AddItem(long userId, ItemsPlayer item)
+        {
+            if (item is null || GetFreeSlots(userId) < 1)
+                return;
+
+            context.ItemsPlayers.Add(item);
+
+            context.SaveChanges();
+        }
+        public int GetFreeSlots(long userId)
+        {
+            var slots = GetPlayer(userId).ResourcesSlotAmount;
+            var takenSlotsAmount = context.ResourcesPlayers.Where(x => x.UserId == userId).ToList().Count;
+            takenSlotsAmount += context.ItemsPlayers.Where(x => x.UserId == userId).ToList().Count;
+            return slots - takenSlotsAmount;
+        }
+        private void HandleAddPlayer(long userId)
+        {
+            var masteries = context.Masteries.ToList();
+            foreach (var mastery in masteries)
+            {
+                context.MasteryPlayers.Add(new MasteryPlayer
+                {
+                    MasteryId = mastery.Id,
+                    UserId = userId,
+                });
+            }
+            context.ItemsPlayers.Add(new ItemsPlayer
+            {
+                ItemId = 1,
+                UserId = userId,
+            });
+            context.ResourcesPlayers.Add(new ResourcesPlayer
+            {
+                ResourceId = 1,
+                Amount = 10,
+                UserId = userId,
+            });
+
+        }
+        private void IncreaseLvl(Player player, MasteryPlayer mastery)
+        {
+            player.CurrentHP = player.HP;
+            
+            mastery.CurrentXP -= mastery.CurrentLevelCLASS.RequrimentXP;
+            mastery.CurrentLvl++;
         }
 
         public async Task ABOBA()
@@ -326,6 +379,11 @@ namespace FrogAnanas.Repositories
                 Id = 2,
                 Name = "Клык гоблина"
             });
+            await context.Resources.AddAsync(new Resource
+            {
+                Id = 3,
+                Name = "Сало вкуснячее"
+            });
 
 
             await context.Enemies.AddAsync(new Enemy
@@ -344,7 +402,22 @@ namespace FrogAnanas.Repositories
                 GivenXP = 30,
                 Stages = context.Stages.Where(x=>x.Id <6).ToList(),
             });
-
+            await context.Enemies.AddAsync(new Enemy
+            {
+                Id = 2,
+                Name = "Хохлуша украинская",
+                Accuracy = 0.8,
+                CritChance = 0.05,
+                MultipleCrit = 1.5,
+                Damage = 4,
+                Defence = 2,
+                Evation = 0.1,
+                HP = 15,
+                Description = "Уебан редкостный",
+                Initiative = 0.7,
+                GivenXP = 50,
+                Stages = context.Stages.Where(x => x.Id < 6).ToList(),
+            });
 
             await context.ResourcesEnemies.AddAsync(new ResourcesEnemy
             {
@@ -353,7 +426,13 @@ namespace FrogAnanas.Repositories
                 DropChance = 0.7,
                 MaxAmount = 3
             });
-
+            await context.ResourcesEnemies.AddAsync(new ResourcesEnemy
+            {
+                EnemyId = 2,
+                ResourceId = 3,
+                DropChance = 0.5,
+                MaxAmount = 4
+            });
 
             await context.ItemsEnemies.AddAsync(new ItemsEnemy
             {
