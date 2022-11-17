@@ -1,6 +1,5 @@
 ﻿using FrogAnanas.Context;
-using FrogAnanas.Events;
-using FrogAnanas.Models;
+using FrogAnanas.DTOs;
 using FrogAnanas.Repositories;
 
 namespace FrogAnanas.Services
