@@ -52,15 +52,9 @@ namespace FrogAnanas.Context
 
 
             modelBuilder.Entity<ResourcesPlayer>()
-            .HasKey(sc => new { sc.UserId, sc.ResourceId });
-
-            modelBuilder.Entity<ResourcesPlayer>()
             .HasOne(p => p.Player)
             .WithMany(mp => mp.ResourcesPlayers)
             .HasForeignKey(p => p.UserId);
-
-            modelBuilder.Entity<ItemsPlayer>()
-            .HasKey(sc => new { sc.UserId, sc.ItemId });
 
             modelBuilder.Entity<ItemsPlayer>()
             .HasOne(p => p.Player)

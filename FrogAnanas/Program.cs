@@ -39,6 +39,8 @@ static AppStart Build(IConfiguration config)
     services.AddTransient<IMasteryRepository, MasteryRepository>();
     services.AddTransient<IStageRepository, StageRepository>();
     services.AddTransient<IEnemyRepository, EnemyRepository>();
+    services.AddTransient<IResourceRepository, ResourceRepository>();
+    services.AddTransient<IItemRepository, ItemRepository>();
     services.AddTransient<IBattleService, BattleService>();
     services.AddSingleton<MongoDbRepository>();
 

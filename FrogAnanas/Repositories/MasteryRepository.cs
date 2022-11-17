@@ -11,15 +11,17 @@ namespace FrogAnanas.Repositories
     public class MasteryRepository : IMasteryRepository
     {
         private readonly ApplicationContext context;
-        private readonly
-        object locker = new object();
         public MasteryRepository(ApplicationContext context)
         {
             this.context = context;
         }
-        public Mastery GetMastery(string name)
+        public Mastery GetMasteryByName(string name)
         {
             return context.Masteries.FirstOrDefault(x => x.Name == name);
+        }
+        public Mastery GetMastery(int id)
+        {
+            return context.Masteries.FirstOrDefault(x => x.Id == id);
         }
     }
 }
