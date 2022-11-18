@@ -30,8 +30,8 @@ namespace FrogAnanas.Models
         public List<MasteryPlayer> MasteryPlayers { get; set; }
         public List<ItemsPlayer> ItemsPlayers { get; set; }
         public List<ResourcesPlayer> ResourcesPlayers { get; set; }
-        public DateTime CreateTime { get; set; } = DateTime.Now;
-        public DateTime UpdateTime { get; set; } = DateTime.Now;
+        public DateTime CreateTime { get; set; } = DateTime.UtcNow;
+        public DateTime UpdateTime { get; set; } = DateTime.UtcNow;
     }
 
     public enum Gender

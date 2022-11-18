@@ -30,7 +30,7 @@ static AppStart Build(IConfiguration config)
     var services = new ServiceCollection()
     .AddDbContextFactory<ApplicationContext>(options =>
     {
-        options.UseSqlServer(config.GetConnectionString("DefaultContext"));
+        options.UseNpgsql(config.GetConnectionString("DefaultContext"));
         options.EnableSensitiveDataLogging();
     }
     ,lifetime: ServiceLifetime.Singleton);
